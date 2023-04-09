@@ -1,6 +1,7 @@
 import { FlatList, StyleSheet } from "react-native";
 
 import { useEffect, useState } from "react";
+import AddPostForm from "../../src/components/AddPostForm";
 import { Text, View } from "../../src/components/Themed";
 import { supabase } from "../../src/lib/supabase";
 
@@ -8,7 +9,10 @@ export default function TabOneScreen() {
   const [posts, setPosts] = useState<any[]>([]);
 
   const fetchPosts = async () => {
-    const { data, error } = await supabase.from("posts").select("*");
+    const { data, error } = await supabase
+      .from("posts")
+      .select("*")
+      .order("created_at", { ascending: false });
 
     if (error) {
       console.log("error", error);
@@ -21,11 +25,24 @@ export default function TabOneScreen() {
     fetchPosts();
   }, []);
 
-  // console.log("posts", posts);
+  const handleSubmit = async (content: string) => {
+    alert(content);
+    const { data, error } = await supabase
+      .from("posts")
+      .insert({ content })
+      .select();
+
+    if (error) {
+      console.log("error", error);
+      return;
+    } else {
+      setPosts([data[0], ...posts]);
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
+      <AddPostForm onSubmit={handleSubmit} />
       <View
         style={styles.separator}
         lightColor="#eee"

@@ -21,3 +21,8 @@ I had to add the polyfill in the top part of my project, in the entry (index.ts 
 
 import "expo-router/entry";
 import "react-native-url-polyfill/auto";
+
+## Utils
+
+rnfs - snippet
+React Native Functional Component with Styles
