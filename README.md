@@ -16,3 +16,8 @@ npm i react-native-url-polyfill
 npm i react-native-dotenv
 
 Take a look at what I had to do in the tsconfig.json and the babel.config.js (in addition to create env.d.tsx).
+
+I had to add the polyfill in the top part of my project, in the entry (index.ts in the root):
+
+import "expo-router/entry";
+import "react-native-url-polyfill/auto";
