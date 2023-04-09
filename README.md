@@ -7,3 +7,12 @@ It was done after using
 
 I had to clean all the cache to make this work
 sudo npm cache clear --force
+
+## Setup
+
+To make it work with supabase and .env I had to install some dependencies:
+
+npm i react-native-url-polyfill
+npm i react-native-dotenv
+
+Take a look at what I had to do in the tsconfig.json and the babel.config.js (in addition to create env.d.tsx).

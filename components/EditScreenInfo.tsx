@@ -7,8 +7,6 @@ import { MonoText } from "./StyledText";
 import { Text, View } from "./Themed";
 
 export default function EditScreenInfo({ path }: { path: string }) {
-  console.log("Me gusta React Native");
-
   return (
     <View>
       <View style={styles.getStartedContainer}>
