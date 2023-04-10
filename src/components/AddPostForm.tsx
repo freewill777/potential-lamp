@@ -1,12 +1,18 @@
+import { Feather } from "@expo/vector-icons";
 import React, { useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, TextInput, TouchableOpacity } from "react-native";
+import { Button, Card, useThemeColor } from "./Themed";
 
 interface Props {
   onSubmit: (content: string) => void;
+  theme: "light" | "dark";
 }
 
-export default function AddPostForm({ onSubmit }: Props) {
-  const [content, setContent] = useState("");
+export default function AddPostForm({ onSubmit, theme }: Props) {
+  const [content, setContent] = useState("sdsds");
+  const color = useThemeColor({}, "primary");
+
+  const styles = createStyles(theme);
 
   const handleSubmit = () => {
     onSubmit(content);
@@ -14,39 +20,42 @@ export default function AddPostForm({ onSubmit }: Props) {
   };
 
   return (
-    <View style={styles.container}>
+    <Card style={styles.container}>
       <TextInput
-        style={styles.input}
+        placeholder="¿Qué estás pensando?"
         value={content}
         onChangeText={setContent}
+        style={styles.textInput}
       />
-      <Pressable style={styles.button} onPress={handleSubmit}>
+
+      <Card style={styles.row}>
+        <TouchableOpacity>
+          <Feather name="image" size={24} color={color} />
+        </TouchableOpacity>
+        <Button title="Publicar" onPress={handleSubmit} />
+      </Card>
+      {/* <Pressable style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Publicar</Text>
-      </Pressable>
-    </View>
+      </Pressable> */}
+    </Card>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    padding: 16,
-    alignItems: "center",
-  },
-  input: {
-    borderColor: "gray",
-    borderWidth: 1,
-    marginBottom: 8,
-    padding: 8,
-    width: "100%",
-  },
-  button: {
-    backgroundColor: "lightblue",
-    padding: 8,
-    borderRadius: 4,
-  },
-  buttonText: {
-    color: "white",
-    textAlign: "center",
-  },
-});
+const createStyles = (theme: "light" | "dark") =>
+  StyleSheet.create({
+    container: {
+      width: "100%",
+      padding: 16,
+    },
+    row: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      width: "100%",
+      margin: 8,
+    },
+    textInput: {
+      fontSize: 18,
+      color: theme === "light" ? "black" : "white",
+    },
+  });

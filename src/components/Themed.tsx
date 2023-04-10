@@ -4,18 +4,20 @@
  */
 
 import {
+  Button as DefaultButton,
   Text as DefaultText,
+  TextInput as DefaultTextInput,
   View as DefaultView,
-  useColorScheme,
 } from "react-native";
 
 import Colors from "../constants/Colors";
+import useColorScheme from "../hooks/useColorScheme";
 
 export function useThemeColor(
   props: { light?: string; dark?: string },
   colorName: keyof typeof Colors.light & keyof typeof Colors.dark
 ) {
-  const theme = useColorScheme() ?? "light";
+  const theme = useColorScheme();
   const colorFromProps = props[theme];
 
   if (colorFromProps) {
@@ -32,6 +34,8 @@ type ThemeProps = {
 
 export type TextProps = ThemeProps & DefaultText["props"];
 export type ViewProps = ThemeProps & DefaultView["props"];
+export type TextInputProps = ThemeProps & DefaultTextInput["props"];
+export type ButtonProps = ThemeProps & DefaultButton["props"];
 
 export function Text(props: TextProps) {
   const { style, lightColor, darkColor, ...otherProps } = props;
@@ -48,4 +52,39 @@ export function View(props: ViewProps) {
   );
 
   return <DefaultView style={[{ backgroundColor }, style]} {...otherProps} />;
+}
+
+export function Card(props: ViewProps) {
+  const { style, lightColor, darkColor, ...otherProps } = props;
+  const backgroundColor = useThemeColor(
+    { light: lightColor, dark: darkColor },
+    "card"
+  );
+
+  return <DefaultView style={[{ backgroundColor }, style]} {...otherProps} />;
+}
+
+export function Button(props: DefaultButton["props"]) {
+  const color = useThemeColor({}, "primary");
+  return <DefaultButton color={color} {...props} />;
+}
+
+export function TextInput(props: DefaultTextInput["props"]) {
+  const { style, ...otherProps } = props;
+  const color = useThemeColor({}, "text");
+  const backgroundColor = useThemeColor({}, "card");
+  const placeholderColor = useThemeColor(
+    { light: "#6b7280", dark: "#e8e9ea" },
+    "text"
+  );
+  const primary = useThemeColor({}, "primary");
+  return (
+    <DefaultTextInput
+      style={[{ backgroundColor, color, fontSize: 16, padding: 8 }, style]}
+      placeholderTextColor={placeholderColor}
+      cursorColor={primary}
+      selectionColor={primary}
+      {...props}
+    />
+  );
 }

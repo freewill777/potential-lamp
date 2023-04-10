@@ -29,6 +29,8 @@ import "react-native-url-polyfill/auto";
 rnfs - snippet
 React Native Functional Component with Styles
 
+cmd+shift+a --> toggle light and dark mode
+
 ## Add supabase CLI and generate types automatically
 
 npm install supabase --save-dev
