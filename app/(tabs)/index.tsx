@@ -3,26 +3,14 @@ import { FlatList, StyleSheet } from "react-native";
 import { useEffect, useState } from "react";
 import AddPostForm from "../../src/components/AddPostForm";
 import { Text, View } from "../../src/components/Themed";
+import { Posts, fetchPosts } from "../../src/lib/api";
 import { supabase } from "../../src/lib/supabase";
 
 export default function TabOneScreen() {
-  const [posts, setPosts] = useState<any[]>([]);
-
-  const fetchPosts = async () => {
-    const { data, error } = await supabase
-      .from("posts")
-      .select("*")
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      console.log("error", error);
-      return;
-    }
-    setPosts(data);
-  };
+  const [posts, setPosts] = useState<Posts>([]);
 
   useEffect(() => {
-    fetchPosts();
+    fetchPosts().then((data) => setPosts(data));
   }, []);
 
   const handleSubmit = async (content: string) => {

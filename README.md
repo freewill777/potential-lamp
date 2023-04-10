@@ -1,5 +1,7 @@
 # Social Platform with Supabase
 
+We are starting https://www.youtube.com/watch?v=WOumYKSam-0
+
 It was done after using
 
 1. npx create-expo-app supabook --template
@@ -26,3 +28,11 @@ import "react-native-url-polyfill/auto";
 
 rnfs - snippet
 React Native Functional Component with Styles
+
+## Add supabase CLI and generate types automatically
+
+npm install supabase --save-dev
+
+npx supabase login
+
+npx supabase gen types typescript --project-id [ID-first-part-of-supabase-url] > ./src/db_types.ts
