@@ -1,40 +1,56 @@
-# Social Platform with Supabase
+<div align="center">
 
-We are starting https://www.youtube.com/watch?v=WOumYKSam-0
+<img src="./logos.png" width="320" alt="Logos" />
 
-It was done after using
+# Plataforma Social con Supabase
 
-1. npx create-expo-app supabook --template
-2. choose navigation with typescript
+Muy cool, hecha con React Native y TypeScript
+</div>
 
-I had to clean all the cache to make this work
-sudo npm cache clear --force
+## ❗️ Disclaimer
 
-## Setup
+Esto es un proyecto de prueba que he hecho siguiendo el tutorial de [Jose Dev](https://www.youtube.com/watch?v=WOumYKSam-0). 
 
-To make it work with supabase and .env I had to install some dependencies:
+Ha sido hecho siguiendo los siguientes pasos:
 
-npm i react-native-url-polyfill
-npm i react-native-dotenv
+1. ```npx create-expo-app supabook --template```
+2. elegir ```navigation with typescript```
 
-Take a look at what I had to do in the tsconfig.json and the babel.config.js (in addition to create env.d.tsx).
+Si muchas veces el código parece no funcionar, prueba a hacer: ```sudo npm cache clear --force```.
 
-I had to add the polyfill in the top part of my project, in the entry (index.ts in the root):
+## 🔧 Setup
 
+Para hacer funcionar el proyecto con supabase and .env, tienes que instalar las siguientes dependencias:
+
+```npm i react-native-url-polyfill```
+
+```npm i react-native-dotenv```
+
+También hay que añadir un par de cosas al ```tsconfig.json``` y al ```babel.config.js``` además de crear el ```./src/types/env.d.tsx```.
+
+Tuve que añadir lo siguiente en el```index.ts``` del root:
+
+```
 import "expo-router/entry";
 import "react-native-url-polyfill/auto";
+```
 
 ## Utils
 
-rnfs - snippet
-React Native Functional Component with Styles
+rnfs --> snippet React Native Functional Component with Styles
+cmd + shift + a --> toggle light and dark mode
 
-cmd+shift+a --> toggle light and dark mode
+## Recomendación: Añadir supabase CLI y generar tipos de forma automática
 
-## Add supabase CLI and generate types automatically
+```npm install supabase --save-dev```
 
-npm install supabase --save-dev
+```npx supabase login```
 
-npx supabase login
+```npx supabase gen types typescript --project-id [ID-first-part-of-supabase-url] > ./src/db_types.ts```
 
-npx supabase gen types typescript --project-id [ID-first-part-of-supabase-url] > ./src/db_types.ts
+
+Cuando hablamos de ID-first-part-of-supabase-url, nos referimos a la primera parte de la SUPABASE_URL. Vamos a tener que correr este comando cada vez que hagamos un cambio en la database.
+
+👨‍💻 Paquetes extra
+
+@react-native-async-storage/async-storage --> Para persistir la session

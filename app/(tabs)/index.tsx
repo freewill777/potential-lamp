@@ -2,10 +2,11 @@ import { FlatList, StyleSheet } from "react-native";
 
 import { useEffect, useState } from "react";
 import AddPostForm from "../../src/components/AddPostForm";
-import { Text, View } from "../../src/components/Themed";
+import { View  } from "../../src/components/Themed";
 import useColorScheme from "../../src/hooks/useColorScheme";
 import { Posts, fetchPosts } from "../../src/lib/api";
 import { supabase } from "../../src/lib/supabase";
+import PostCard from "../../src/components/PostCard";
 
 export default function TabOneScreen() {
   const [posts, setPosts] = useState<Posts>([]);
@@ -14,6 +15,8 @@ export default function TabOneScreen() {
   useEffect(() => {
     fetchPosts().then((data) => setPosts(data));
   }, []);
+
+  // console.log("Estos son los posts:", posts);
 
   const handleSubmit = async (content: string) => {
     alert(content);
@@ -38,7 +41,7 @@ export default function TabOneScreen() {
         keyExtractor={(item) => item.id}
         data={posts}
         contentContainerStyle={{ paddingTop: 8 }}
-        renderItem={({ item }) => <Text>{item.content}</Text>}
+        renderItem={({ item }) => <PostCard post={item}/>}
       />
     </View>
   );

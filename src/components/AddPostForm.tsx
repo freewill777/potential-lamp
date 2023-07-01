@@ -9,7 +9,7 @@ interface Props {
 }
 
 export default function AddPostForm({ onSubmit, theme }: Props) {
-  const [content, setContent] = useState("sdsds");
+  const [content, setContent] = useState("");
   const color = useThemeColor({}, "primary");
 
   const styles = createStyles(theme);
@@ -45,7 +45,8 @@ const createStyles = (theme: "light" | "dark") =>
   StyleSheet.create({
     container: {
       width: "100%",
-      padding: 16,
+      paddingHorizontal: 16,
+      paddingTop: 24,
     },
     row: {
       flexDirection: "row",
@@ -57,5 +58,7 @@ const createStyles = (theme: "light" | "dark") =>
     textInput: {
       fontSize: 18,
       color: theme === "light" ? "black" : "white",
+      marginTop: 8,
+      marginLeft: 8,
     },
   });

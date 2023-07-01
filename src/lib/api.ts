@@ -1,6 +1,7 @@
 import { supabase } from "./supabase";
 
 export type Posts = Awaited<ReturnType<typeof fetchPosts>>;
+export type Post = Posts[number];
 
 export const fetchPosts = async () => {
   const { data, error } = await supabase

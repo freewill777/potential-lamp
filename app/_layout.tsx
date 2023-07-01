@@ -8,15 +8,18 @@ import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
 import { useColorScheme } from "react-native";
+import AuthScreen from "./auth";
+import { AuthProvider, useUserInfo } from "../src/lib/userContext";
 
 export { ErrorBoundary } from "expo-router";
 
-export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: "(tabs)",
-};
+// export const unstable_settings = {
+//   // Ensure that reloading on `/modal` keeps a back button present.
+//   initialRouteName: session ? "(tabs)" : "auth",
+// };
 
 export default function RootLayout() {
+
   const [loaded, error] = useFonts({
     SpaceMono: require("../src/assets/fonts/SpaceMono-Regular.ttf"),
     ...FontAwesome.font,
@@ -28,23 +31,26 @@ export default function RootLayout() {
   }, [error]);
 
   return (
-    <>
-      {/* Keep the splash screen open until the assets have loaded. In the future, we should just support async font loading with a native version of font-display. */}
+    <AuthProvider>
       {!loaded && <SplashScreen />}
-      {loaded && <RootLayoutNav />}
-    </>
+      {loaded &&  <AppStack /> }
+    </AuthProvider>
   );
 }
 
-function RootLayoutNav() {
+function AppStack() {
   const colorScheme = useColorScheme();
+  const { session } = useUserInfo();
+
+  if (!session) {
+    return <AuthScreen />;
+  }
 
   return (
     <>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: "modal" }} />
         </Stack>
       </ThemeProvider>
     </>
