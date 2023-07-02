@@ -1,8 +1,10 @@
 import { Alert, Image, StyleSheet, TouchableOpacity } from 'react-native'
-import { Post, Profile } from '../lib/api'
-import { Card, Text, View, useThemeColor } from './Themed'
+import { Post, Profile, downloadAvatar } from '../lib/api'
+import { Card, Text, useThemeColor } from './Themed'
 import { FontAwesome } from '@expo/vector-icons'
 import { useUserInfo } from '../lib/userContext'
+import { useEffect, useState } from 'react'
+import Avatar from './Avatar'
 
 interface PostCardProps {
   post: Post
@@ -13,6 +15,14 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
   const color = useThemeColor({}, 'primary')
   const profile = post.profile as Profile
   const user = useUserInfo()
+  const [avatarUrl, setAvatarUrl] = useState('')
+
+  useEffect(() => {
+    if(profile?.avatar_url) {
+      downloadAvatar(profile.avatar_url).then(setAvatarUrl)
+    }
+  }, [profile])
+
 
   function confirmDelete() {
     Alert.alert(
@@ -32,13 +42,10 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
   return (
     <Card style={styles.container}>
       <Card style={styles.header}>
-        <Image
-          source={{
-            uri: 'https://images.unsplash.com/photo-1564564244660-5d73c057f2d2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2076&q=80',
-          }}
-          style={styles.avatar}
+        <Avatar
+          uri={avatarUrl}
         />
-        <Text style={styles.username}>{post.profile?.username}</Text>
+        <Text style={styles.username}>{profile?.username}</Text>
       </Card>
 
       {post.image && (
@@ -83,6 +90,7 @@ const styles = StyleSheet.create({
   },
   username: {
     fontWeight: 'bold',
+    marginLeft: 8,
   },
   content: {
     padding: 16,

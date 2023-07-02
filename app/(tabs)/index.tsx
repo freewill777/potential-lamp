@@ -1,47 +1,69 @@
-import { Alert, FlatList, StyleSheet } from "react-native";
+import { Alert, FlatList, StyleSheet } from 'react-native'
 
-import { useEffect, useState } from "react";
-import AddPostForm from "../../src/components/AddPostForm";
-import { View  } from "../../src/components/Themed";
-import useColorScheme from "../../src/hooks/useColorScheme";
-import { Posts, fetchPosts } from "../../src/lib/api";
-import { supabase } from "../../src/lib/supabase";
-import PostCard from "../../src/components/PostCard";
+import { useEffect, useState } from 'react'
+import AddPostForm from '../../src/components/AddPostForm'
+import { View } from '../../src/components/Themed'
+import useColorScheme from '../../src/hooks/useColorScheme'
+import { Posts, fetchPosts } from '../../src/lib/api'
+import { supabase } from '../../src/lib/supabase'
+import PostCard from '../../src/components/PostCard'
+import { useUserInfo } from '../../src/lib/userContext'
 
 export default function TabOneScreen() {
-  const [posts, setPosts] = useState<Posts>([]);
-  const theme = useColorScheme();
+  const [posts, setPosts] = useState<Posts>([])
+  const theme = useColorScheme()
+  const { profile } = useUserInfo()
 
   useEffect(() => {
-    fetchPosts().then((data) => setPosts(data));
-  }, []);
+    fetchPosts().then((data) => setPosts(data))
+  }, [profile])
 
-  // console.log("Estos son los posts:", posts);
+  const handleSubmit = async (content: string, image: string) => {
+    try {
+      let publicUrl = "";
+      if (image) {
+        const fileExt = image.split(".").pop();
+        const fileName = image.replace(/^.*[\\\/]/, "");
+        const filePath = `${Date.now()}.${fileExt}`;
 
-  const handleSubmit = async (content: string) => {
+        const formData = new FormData();
+        const photo = {
+          uri: image,
+          name: fileName,
+          type: `image/${fileExt}`,
+        } as unknown as Blob;
+        formData.append("file", photo);
 
-    const { data, error } = await supabase
-      .from("posts")
-      .insert({ content })
-      .select("*, profile: profiles(username)");
+        const { error } = await supabase.storage
+          .from("posts")
+          .upload(filePath, formData);
+        if (error) throw error;
 
-    if (error) {
-      Alert.alert(error.message);
-      console.log("error", error);
-      return;
-    } else {
-      setPosts([data[0], ...posts]);
+        const { data } = supabase.storage.from("posts").getPublicUrl(filePath);
+        publicUrl = data.publicUrl;
+      }
+      const { data, error } = await supabase
+        .from("posts")
+        .insert({ content, image: publicUrl })
+        .select("*, profile: profiles(username, avatar_url)");
+      if (error) {
+        throw error;
+      } else {
+        setPosts([data[0], ...posts]);
+      }
+    } catch (error: any) {
+      Alert.alert("Server Error", error.message);
     }
   };
 
   const handleDeletePost = async (id: string) => {
-   const { error } = await supabase.from("posts").delete().eq('id', id);
-   if(error) {
-      Alert.alert(error.message);
-      console.log(error);
-   } else {
-    setPosts(posts.filter((post) => post.id !== id));
-   }
+    const { error } = await supabase.from('posts').delete().eq('id', id)
+    if (error) {
+      Alert.alert(error.message)
+      console.log(error)
+    } else {
+      setPosts(posts.filter((post) => post.id !== id))
+    }
   }
 
   return (
@@ -52,14 +74,16 @@ export default function TabOneScreen() {
         keyExtractor={(item) => item.id}
         data={posts}
         contentContainerStyle={{ paddingTop: 8 }}
-        renderItem={({ item }) => <PostCard onDelete={() => handleDeletePost(item.id)} post={item}/>}
+        renderItem={({ item }) => (
+          <PostCard onDelete={() => handleDeletePost(item.id)} post={item} />
+        )}
       />
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-});
+})
