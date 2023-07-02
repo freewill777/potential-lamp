@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet } from "react-native";
+import { Alert, FlatList, StyleSheet } from "react-native";
 
 import { useEffect, useState } from "react";
 import AddPostForm from "../../src/components/AddPostForm";
@@ -19,19 +19,30 @@ export default function TabOneScreen() {
   // console.log("Estos son los posts:", posts);
 
   const handleSubmit = async (content: string) => {
-    alert(content);
+
     const { data, error } = await supabase
       .from("posts")
       .insert({ content })
-      .select();
+      .select("*, profile: profiles(username)");
 
     if (error) {
+      Alert.alert(error.message);
       console.log("error", error);
       return;
     } else {
       setPosts([data[0], ...posts]);
     }
   };
+
+  const handleDeletePost = async (id: string) => {
+   const { error } = await supabase.from("posts").delete().eq('id', id);
+   if(error) {
+      Alert.alert(error.message);
+      console.log(error);
+   } else {
+    setPosts(posts.filter((post) => post.id !== id));
+   }
+  }
 
   return (
     <View style={styles.container}>
@@ -41,7 +52,7 @@ export default function TabOneScreen() {
         keyExtractor={(item) => item.id}
         data={posts}
         contentContainerStyle={{ paddingTop: 8 }}
-        renderItem={({ item }) => <PostCard post={item}/>}
+        renderItem={({ item }) => <PostCard onDelete={() => handleDeletePost(item.id)} post={item}/>}
       />
     </View>
   );

@@ -11,8 +11,8 @@ export default function AuthScreen() {
   const handleSignup = async (credentials: SignUpWithPasswordCredentials) => {
     if(!('email' in credentials)) return;
     setLoading(true);
-    const { email, password } = credentials;
-    const {error, data} = await supabase.auth.signUp({ email, password });
+    const { email, password, options } = credentials;
+    const {error, data} = await supabase.auth.signUp({ email, password, options });
 
     if(error) Alert.alert(error.message);
     // console.log(data);

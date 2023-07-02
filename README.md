@@ -54,3 +54,6 @@ Cuando hablamos de ID-first-part-of-supabase-url, nos referimos a la primera par
 👨‍💻 Paquetes extra
 
 @react-native-async-storage/async-storage --> Para persistir la session
+
+En caso de dudas, es buena idea echarle un vistazo a las partes 7 y 8 del tutorial, que es dnd se habla de authenticación y permisos. 
+https://www.youtube.com/watch?v=Oc4lldpq0-U&t=3s

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from 'react'
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -6,18 +6,18 @@ import {
   SafeAreaView,
   StyleSheet,
   TouchableWithoutFeedback,
-} from 'react-native';
-import { Button, Text, TextInput, View } from './Themed';
+} from 'react-native'
+import { Button, Text, TextInput, View } from './Themed'
 
 import type {
   SignInWithPasswordCredentials,
   SignUpWithPasswordCredentials,
-} from '@supabase/supabase-js';
+} from '@supabase/supabase-js'
 
 interface AuthFormProps {
-  onSignUp: (credentials: SignUpWithPasswordCredentials) => void;
-  onLogin: (credentials: SignInWithPasswordCredentials) => void;
-  loading: boolean;
+  onSignUp: (credentials: SignUpWithPasswordCredentials) => void
+  onLogin: (credentials: SignInWithPasswordCredentials) => void
+  loading: boolean
 }
 
 export default function AuthForm({
@@ -25,18 +25,25 @@ export default function AuthForm({
   onLogin,
   loading,
 }: AuthFormProps) {
-  const [mode, setMode] = useState<'login' | 'signUp'>('login');
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [mode, setMode] = useState<'login' | 'signUp'>('login')
+  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [successfulSignup, setSuccessfullSignup] = useState(false)
 
   const handleSubmit = () => {
     if (mode === 'login') {
-      onLogin({ email, password });
+      onLogin({ email, password })
+      setEmail('')
+      setPassword('')
     } else {
-      onSignUp({ email, password, options: { data: { username } } });
+      onSignUp({ email, password, options: { data: { username } } })
+      setSuccessfullSignup(true)
+      setEmail('')
+      setPassword('')
+      setUsername('')
     }
-  };
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -89,14 +96,23 @@ export default function AuthForm({
               </Text>
               <Button
                 title={mode === 'login' ? 'Regístrate' : 'Inicia sesión'}
-                onPress={() => setMode(mode === 'login' ? 'signUp' : 'login')}
+                onPress={() => {
+                  setMode(mode === 'login' ? 'signUp' : 'login')
+                  setSuccessfullSignup(false)
+                }}
               />
             </View>
+
+            {successfulSignup && mode === 'signUp' && (
+              <Text style={styles.successText}>
+                El registro ha salido genial. Mira tu correo.
+              </Text>
+            )}
           </View>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
     </SafeAreaView>
-  );
+  )
 }
 const styles = StyleSheet.create({
   container: {
@@ -107,7 +123,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    height: "100%",
+    height: '100%',
     width: '100%',
   },
   title: {
@@ -126,4 +142,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-});
+  successText: {
+    color: 'green',
+    marginTop: 8,
+  },
+})
