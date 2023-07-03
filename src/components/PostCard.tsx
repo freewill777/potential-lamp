@@ -1,10 +1,11 @@
 import { Alert, Image, StyleSheet, TouchableOpacity } from 'react-native'
-import { Post, Profile, downloadAvatar } from '../lib/api'
+import { Likes, Post, Profile, downloadAvatar, fecthLikes } from '../lib/api'
 import { Card, Text, useThemeColor } from './Themed'
 import { FontAwesome } from '@expo/vector-icons'
 import { useUserInfo } from '../lib/userContext'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import Avatar from './Avatar'
+import { supabase } from '../lib/supabase'
 
 interface PostCardProps {
   post: Post
@@ -16,35 +17,61 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
   const profile = post.profile as Profile
   const user = useUserInfo()
   const [avatarUrl, setAvatarUrl] = useState('')
+  const [likes, setLikes] = useState<Likes>([])
+  
+  const userLikesPost = useMemo(() => likes?.find((like) => like.user_id === user?.profile?.id), [likes, user]) 
+
+  const getLikes = useCallback(() =>   fecthLikes(post.id).then(setLikes), [post])
 
   useEffect(() => {
-    if(profile?.avatar_url) {
+    getLikes()
+  }, [getLikes])
+
+  useEffect(() => {
+    if (profile?.avatar_url) {
       downloadAvatar(profile.avatar_url).then(setAvatarUrl)
     }
   }, [profile])
 
+  const toggleLike = async () => {
+    if (!user.profile) return
+
+    if(userLikesPost) {
+      // delete this
+      const { error } = await supabase.from('post_likes').delete().eq('id', userLikesPost.id)
+      if (error) Alert.alert(error.message)
+    } else {
+      const { error } = await supabase.from('post_likes').insert({
+        post_id: post.id,
+        user_id: user?.profile?.id,
+      })
+  
+      if (error) Alert.alert(error.message)
+    }
+ 
+    getLikes()
+ 
+  }
 
   function confirmDelete() {
     Alert.alert(
-      "Borrar el post",
-      "¿Estás seguro de que quieres borrar el post?",
+      'Borrar el post',
+      '¿Estás seguro de que quieres borrar el post?',
       [
         {
-          text: "Cancelar",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel"
+          text: 'Cancelar',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
         },
-        { text: "OK", onPress: () => onDelete() }
+        { text: 'OK', onPress: () => onDelete() },
       ]
-    );
+    )
   }
 
   return (
     <Card style={styles.container}>
       <Card style={styles.header}>
-        <Avatar
-          uri={avatarUrl}
-        />
+        <Avatar uri={avatarUrl} />
         <Text style={styles.username}>{profile?.username}</Text>
       </Card>
 
@@ -57,8 +84,12 @@ export default function PostCard({ post, onDelete }: PostCardProps) {
       <Card style={styles.content}>
         <Text style={styles.contentText}>{post.content}</Text>
         <Card style={styles.footer}>
-          <TouchableOpacity>
-            <FontAwesome name="heart-o" size={24} color={color} />
+          <TouchableOpacity
+            onPress={toggleLike}
+            style={{ flexDirection: 'row', alignItems: 'flex-end' }}
+          >
+            <FontAwesome name={userLikesPost ? 'heart' : 'heart-o'} size={24} color={color} />
+            {likes.length >= 0 && <Text>{likes.length}</Text>}
           </TouchableOpacity>
 
           {user?.profile?.id === post.user_id && (

@@ -1,11 +1,11 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
-import { Tabs, useNavigation } from "expo-router";
+import { Tabs } from "expo-router";
 import { useColorScheme } from "react-native";
 
 import Colors from "../../src/constants/Colors";
 import { useUserInfo } from "../../src/lib/userContext";
-import { useEffect } from "react";
+import { SCREENS } from "../../src/constants/Screens";
 
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -29,7 +29,7 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name={SCREENS.HOME}
         options={{
           title: "Inicio",
           headerTitle: "Plataforma Social",
@@ -37,7 +37,15 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="two"
+        name={SCREENS.MESSAGES}
+        options={{
+          title: "Mensajes",
+          headerTitle: "Mensajes",
+          tabBarIcon: ({ color }) => <TabBarIcon name="comment" color={color} />,
+        }}
+      />
+       <Tabs.Screen
+        name={SCREENS.PROFILE}
         options={{
           title: "Perfil",
           headerTitle: profile?.username || '',

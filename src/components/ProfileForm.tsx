@@ -8,7 +8,7 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
 } from "react-native";
-import { Button, TextInput, View } from "./Themed";
+import { Button, Text, TextInput, View } from "./Themed";
 import { downloadAvatar, Profile } from "../lib/api";
 import Avatar from "./Avatar";
 import * as ImagePicker from "expo-image-picker";
@@ -75,7 +75,9 @@ export default function ProfileForm({
                 </View>
                 <Avatar uri={avatarUrl} size={120} />
               </TouchableOpacity>
+              <Text style={styles.label}>Nombre de usuario</Text> 
               <TextInput
+                style={styles.textInput}
                 placeholder="Nombre de usuario"
                 value={username}
                 onChangeText={setUsername}
@@ -108,7 +110,19 @@ const styles = StyleSheet.create({
   },
   input: {
     paddingVertical: 8,
-    position: 'relative'
+    position: 'relative',
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#000', 
+    marginVertical: 16,
+  },
+  textInput: {
+    borderWidth: 1,
+    borderColor: 'gray',
+    padding: 8,
+    backgroundColor: '#fff',
   },
   avatarButton: {
     alignItems: "center",

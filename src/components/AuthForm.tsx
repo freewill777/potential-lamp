@@ -105,7 +105,7 @@ export default function AuthForm({
 
             {successfulSignup && mode === 'signUp' && (
               <Text style={styles.successText}>
-                El registro ha salido genial. Mira tu correo.
+                El registro ha salido genial. Inicia sesión.
               </Text>
             )}
           </View>

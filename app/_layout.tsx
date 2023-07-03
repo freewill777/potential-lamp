@@ -10,13 +10,9 @@ import { useEffect } from "react";
 import { useColorScheme } from "react-native";
 import AuthScreen from "./auth";
 import { AuthProvider, useUserInfo } from "../src/lib/userContext";
+import { SCREENS } from "../src/constants/Screens";
 
 export { ErrorBoundary } from "expo-router";
-
-// export const unstable_settings = {
-//   // Ensure that reloading on `/modal` keeps a back button present.
-//   initialRouteName: session ? "(tabs)" : "auth",
-// };
 
 export default function RootLayout() {
 
@@ -50,7 +46,12 @@ function AppStack() {
     <>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name={SCREENS.TABS} options={{ headerShown: false }} />
+          {/* @ts-ignore */}
+          <Stack.Screen name={SCREENS.CHAT} options={({route}) => ({
+            headerShown: true, 
+            title: route.params.username
+          })} />
         </Stack>
       </ThemeProvider>
     </>
