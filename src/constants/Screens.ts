@@ -1,7 +1,8 @@
 export const SCREENS = {
-    HOME: 'home',
+    HOME: 'index',
     PROFILE: 'profile',
     MESSAGES: 'messages',
     CHAT: 'chat',
-    TABS: '(tabs)'
+    TABS: '(tabs)',
+    AUTH: 'auth'
 }

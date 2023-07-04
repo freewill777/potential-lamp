@@ -39,13 +39,15 @@ function AppStack() {
   const { session } = useUserInfo();
 
   if (!session) {
-    return <AuthScreen />;
+    return <AuthScreen />
   }
+
 
   return (
     <>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack>
+          <Stack.Screen name={SCREENS.AUTH} options={{ headerShown: false }} />
           <Stack.Screen name={SCREENS.TABS} options={{ headerShown: false }} />
           {/* @ts-ignore */}
           <Stack.Screen name={SCREENS.CHAT} options={({route}) => ({

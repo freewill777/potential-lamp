@@ -19,12 +19,18 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#ffffff",
+        "package": "com.msweb.plataforma_social"
       }
     },
     "web": {
       "bundler": "metro",
       "favicon": "./src/assets/images/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a4a600d8-c719-4761-bbfa-263011b84be3"
+      }
     }
   }
 }
