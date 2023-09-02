@@ -9,98 +9,27 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      messages: {
-        Row: {
-          content: string
-          created_at: string
-          id: number
-          receiver_id: string
-          sender_id: string
-        }
-        Insert: {
-          content: string
-          created_at?: string
-          id?: number
-          receiver_id: string
-          sender_id: string
-        }
-        Update: {
-          content?: string
-          created_at?: string
-          id?: number
-          receiver_id?: string
-          sender_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "messages_receiver_id_fkey"
-            columns: ["receiver_id"]
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "messages_sender_id_fkey"
-            columns: ["sender_id"]
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      post_likes: {
-        Row: {
-          created_at: string | null
-          id: number
-          post_id: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: number
-          post_id: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: number
-          post_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "post_likes_post_id_fkey"
-            columns: ["post_id"]
-            referencedRelation: "posts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "post_likes_user_id_fkey"
-            columns: ["user_id"]
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
       posts: {
         Row: {
           content: string
-          created_at: string | null
+          created_at: string
           id: string
           image: string | null
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           content: string
-          created_at?: string | null
+          created_at?: string
           id?: string
           image?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Update: {
           content?: string
-          created_at?: string | null
+          created_at?: string
           id?: string
           image?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {
@@ -144,6 +73,30 @@ export interface Database {
             referencedColumns: ["id"]
           }
         ]
+      }
+      Tasks: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: number
+          owner: string | null
+          title: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: number
+          owner?: string | null
+          title?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: number
+          owner?: string | null
+          title?: string | null
+        }
+        Relationships: []
       }
     }
     Views: {

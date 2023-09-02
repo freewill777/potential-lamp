@@ -3,7 +3,7 @@ import { ConfigContext, ExpoConfig } from "@expo/config";
 export default ({ config }: ConfigContext): ExpoConfig => {
   return {
     ...config,
-    slug: "supabook",
+    slug: "supabookz",
     name: "Plataforma Social",
     extra: {
       ...config.extra,
