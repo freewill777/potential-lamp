@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { Button, Text, TextInput, View } from "./Themed";
 import { downloadAvatar, Profile } from "../lib/api";
@@ -58,6 +59,24 @@ export default function ProfileForm({
     }
   };
 
+  const handleTakePhoto = async () => {
+    const result = await ImagePicker.launchCameraAsync();
+    if (!result.canceled) {
+      setAvatarUrl(result.assets[0].uri);
+      setAvatarUpdated(true);
+    }
+  };
+
+  const handleChangeAvatar = () => {
+    return Alert.alert("Change avatar", undefined, [
+      {
+        text: "Take Photo",
+        onPress: handleTakePhoto,
+      },
+      { text: "Import photo", onPress: handlePickImage },
+    ]);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
@@ -69,7 +88,7 @@ export default function ProfileForm({
             <View style={styles.input}>
               <TouchableOpacity
                 style={styles.avatarButton}
-                onPress={handlePickImage}
+                onPress={handleChangeAvatar}
               >
                 <View style={styles.iconChange}>
                   <FontAwesome name="upload" size={18} color="black" />

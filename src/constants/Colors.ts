@@ -1,10 +1,10 @@
-const primary = "#3bd08f";
+const primary = "#01b1b0";
 const tintColorLight = primary;
 const tintColorDark = primary;
 
 export default {
   light: {
-    text: "#111827",
+    text: "#380a2a",
     background: "#f3f4f6",
     card: "#fff",
     tint: tintColorLight,
@@ -13,8 +13,8 @@ export default {
     primary,
   },
   dark: {
-    text: "#fff",
-    background: "#111827",
+    text: "#380a2a",
+    background: "#fcfbfe",
     card: "#374151",
     tint: tintColorDark,
     tabIconDefault: "#e5e7eb",

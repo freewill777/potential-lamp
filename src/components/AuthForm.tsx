@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   StyleSheet,
   TouchableWithoutFeedback,
+  Image,
 } from "react-native";
 import { Button, Text, TextInput, View } from "./Themed";
 import { SimpleButton } from "./Themed";
@@ -20,6 +21,8 @@ interface AuthFormProps {
   onLogin: (credentials: SignInWithPasswordCredentials) => void;
   loading: boolean;
 }
+
+export const logoMainImage = require("../assets/images/logo-main.png");
 
 export default function AuthForm({
   onSignUp,
@@ -54,7 +57,8 @@ export default function AuthForm({
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.inner}>
-            <Text style={styles.title}>Social Media</Text>
+            {/* <Text style={styles.title}>Social Media</Text> */}
+            <Image source={logoMainImage} style={{ width: 180, height: 180 }} />
             {mode === "signUp" && (
               <View style={styles.input}>
                 <TextInput
@@ -71,6 +75,16 @@ export default function AuthForm({
                 onChangeText={setEmail}
                 autoCapitalize="none"
                 keyboardType="email-address"
+                style={[
+                  styles.input,
+                  {
+                    borderColor: "#380a2a",
+                    borderWidth: 1,
+                    borderRadius: 5,
+                    paddingHorizontal: 10,
+                  },
+                ]}
+                placeholderTextColor={"#380a2a"}
               />
             </View>
             <View style={styles.input}>
@@ -80,6 +94,16 @@ export default function AuthForm({
                 onChangeText={setPassword}
                 secureTextEntry={true}
                 autoCapitalize="none"
+                placeholderTextColor={"#380a2a"}
+                style={[
+                  styles.input,
+                  {
+                    borderColor: "#380a2a",
+                    borderWidth: 1,
+                    borderRadius: 5,
+                    paddingHorizontal: 10,
+                  },
+                ]}
               />
             </View>
             <View style={styles.input}>
@@ -128,10 +152,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 24,
     marginTop: 16,
+    fontFamily: "DMSans",
   },
   input: {
     paddingVertical: 8,
     width: "100%",
+    color: "#380a2a",
   },
   footer: {
     paddingTop: 16,

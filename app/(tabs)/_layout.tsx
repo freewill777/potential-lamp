@@ -1,12 +1,14 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 import { Tabs } from "expo-router";
-import { useColorScheme } from "react-native";
+import { useColorScheme, Image } from "react-native";
 
-import Colors from "../../src/constants/Colors";
 import { useUserInfo } from "../../src/lib/userContext";
 import { SCREENS } from "../../src/constants/Screens";
-
+import HeaderButtonsBar from "../../subcomponents/HeaderButtonsBar";
+import { Text } from "../../src/components/Themed";
+import { logoMainImage } from "../../src/components/AuthForm";
+import Colors from "../../enums";
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
  */
@@ -24,7 +26,7 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+        tabBarActiveTintColor: Colors.TurquoiseLight,
         headerShadowVisible: false,
       }}
     >
@@ -32,15 +34,22 @@ export default function TabLayout() {
         name={SCREENS.HOME}
         options={{
           title: "Home",
-          headerTitle: "Existam",
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+          headerRight: () => <HeaderButtonsBar />,
+          headerLeft: () => (
+            <Image
+              source={logoMainImage}
+              style={{ width: 70, height: 70, marginLeft: 10 }}
+            />
+          ),
+          headerTitle: "",
         }}
       />
       <Tabs.Screen
         name={SCREENS.MESSAGES}
         options={{
           title: "Messenger",
-          headerTitle: "Messenger",
+          headerTitle: "",
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="comment" color={color} />
           ),

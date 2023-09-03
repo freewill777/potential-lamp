@@ -1,14 +1,16 @@
-import { Feather } from "@expo/vector-icons";
+import { Feather, MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
 import {
   ImageBackground,
+  Pressable,
   StyleSheet,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import { Button, Card, useThemeColor } from "./Themed";
+import { Button, Card, SimpleButton, useThemeColor } from "./Themed";
 import * as ImagePicker from "expo-image-picker";
+import Colors from "../../enums";
 
 interface Props {
   onSubmit: (content: string, image: string) => void;
@@ -17,8 +19,7 @@ interface Props {
 
 export default function AddPostForm({ onSubmit, theme }: Props) {
   const [content, setContent] = useState("");
-  const color = useThemeColor({}, "primary");
-  const styles = createStyles(theme);
+  const styles = createStyles();
   const [image, setImage] = useState("");
   const [permission, requestPermission] = ImagePicker.useCameraPermissions();
 
@@ -46,34 +47,48 @@ export default function AddPostForm({ onSubmit, theme }: Props) {
   };
 
   const handleTakePhoto = async () => {
-    const result = await ImagePicker.launchCameraAsync();
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+    });
     if (!result.canceled) {
       setImage(result.assets[0].uri);
     }
-  };
-
-  const HStack = ({ children }) => {
-    return <View> {children}</View>;
   };
 
   return (
     <Card style={styles.container}>
       <TextInput
         placeholder="Share something..."
+        placeholderTextColor={Colors.MagentaDarker}
         value={content}
         onChangeText={setContent}
         style={styles.textInput}
       />
-      <Card style={styles.row}>
+      <Card style={[styles.row, { backgroundColor: undefined }]}>
         <View style={{ flexDirection: "row", columnGap: 20 }}>
           <TouchableOpacity onPress={handlePickImage}>
-            <Feather name="image" size={24} color={color} />
+            <Feather name="image" size={24} color={Colors.BlackBlue} />
           </TouchableOpacity>
           <TouchableOpacity onPress={handleTakePhoto}>
-            <Feather name="camera" size={24} color={color} />
+            <Feather name="camera" size={24} color={Colors.BlackBlue} />
           </TouchableOpacity>
+          <Pressable onPress={() => {}}>
+            {({ pressed }) => (
+              <MaterialIcons
+                name="addchart"
+                size={24}
+                color={Colors.BlackBlue}
+                style={{
+                  marginRight: 15,
+                  marginTop: 1,
+                  opacity: pressed ? 0.5 : 1,
+                }}
+              />
+            )}
+          </Pressable>
         </View>
-        <Button title="Publish" onPress={handleSubmit} />
+        <SimpleButton inverted title="Publish" onPress={handleSubmit} />
       </Card>
 
       {image && (
@@ -90,12 +105,16 @@ export default function AddPostForm({ onSubmit, theme }: Props) {
   );
 }
 
-const createStyles = (theme: "light" | "dark") =>
+const createStyles = () =>
   StyleSheet.create({
     container: {
       width: "100%",
       paddingHorizontal: 16,
       paddingTop: 24,
+      backgroundColor: "#e2eff2",
+      borderColor: Colors.MagentaDark,
+      borderTopWidth: 1,
+      borderBottomWidth: 1,
     },
     row: {
       flexDirection: "row",
@@ -106,7 +125,7 @@ const createStyles = (theme: "light" | "dark") =>
     },
     textInput: {
       fontSize: 18,
-      color: theme === "light" ? "black" : "white",
+      color: Colors.MagentaDarker,
       marginTop: 8,
       marginLeft: 8,
     },

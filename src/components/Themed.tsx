@@ -12,6 +12,7 @@ import {
 } from "react-native";
 
 import Colors from "../constants/Colors";
+
 import useColorScheme from "../hooks/useColorScheme";
 
 export function useThemeColor(
@@ -42,7 +43,12 @@ export function Text(props: TextProps) {
   const { style, lightColor, darkColor, ...otherProps } = props;
   const color = useThemeColor({ light: lightColor, dark: darkColor }, "text");
 
-  return <DefaultText style={[{ color }, style]} {...otherProps} />;
+  return (
+    <DefaultText
+      style={[{ color }, style, { fontFamily: "DMSans" }]}
+      {...otherProps}
+    />
+  );
 }
 
 export function View(props: ViewProps) {
@@ -70,17 +76,23 @@ export function Button(props: DefaultButton["props"]) {
   return <DefaultButton color={color} {...props} />;
 }
 
-export function SimpleButton(props: DefaultButton["props"]) {
+export function SimpleButton(
+  props: DefaultButton["props"] & { inverted?: boolean }
+) {
   const styles = {
     followingButton: {
       justifyContent: "center",
       alignItems: "center",
       paddingVertical: 8,
       borderRadius: 7,
-      borderWidth: 1,
+      borderWidth: 1.2,
+      ...(props.inverted && { backgroundColor: "#0f4358" }),
     },
     followButtonText: {
       fontWeight: "bold",
+      marginHorizontal: 8,
+      fontFamily: "DMSans",
+      ...(props.inverted && { color: "white" }),
     },
   };
   return (
@@ -101,7 +113,11 @@ export function TextInput(props: DefaultTextInput["props"]) {
   const primary = useThemeColor({}, "primary");
   return (
     <DefaultTextInput
-      style={[{ backgroundColor, color, fontSize: 16, padding: 8 }, style]}
+      style={[
+        { backgroundColor, color, fontSize: 16, padding: 8 },
+        style,
+        { fontFamily: "DMSans" },
+      ]}
       placeholderTextColor={placeholderColor}
       cursorColor={primary}
       selectionColor={primary}

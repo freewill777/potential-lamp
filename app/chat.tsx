@@ -1,6 +1,6 @@
 import { Alert, StyleSheet, Text, View } from "react-native";
 import { useState, useCallback, useEffect } from "react";
-import { GiftedChat } from "react-native-gifted-chat";
+import { GiftedChat, Bubble, BubbleProps } from "react-native-gifted-chat";
 import { Message, Messages, fetchMessages } from "../src/lib/api";
 import { supabase } from "../src/lib/supabase";
 import { useUserInfo } from "../src/lib/userContext";
@@ -18,7 +18,7 @@ type ChatScreenRouteProp = {
 export default function ChatScreen() {
   const route = useRoute<ChatScreenRouteProp>();
   const { contactId } = route.params;
-  
+
   const [messages, setMessages] = useState<Messages>([]);
   const { profile: user } = useUserInfo();
 
@@ -39,7 +39,10 @@ export default function ChatScreen() {
         (payload) => {
           const newMessage = payload.new as Message;
           if (newMessage.receiver_id === user.id) {
-            setMessages((prevMessages: Messages) => [newMessage, ...prevMessages]);
+            setMessages((prevMessages: Messages) => [
+              newMessage,
+              ...prevMessages,
+            ]);
           }
         }
       )
@@ -81,6 +84,12 @@ export default function ChatScreen() {
       user={{
         _id: user?.id || "",
       }}
+      renderBubble={(props) => (
+        <Bubble
+          {...props}
+          wrapperStyle={{ right: { backgroundColor: "#0f4358" } }}
+        />
+      )}
     />
   );
 }

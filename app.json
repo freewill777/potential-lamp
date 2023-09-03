@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "plataforma-social",
-    "slug": "plataforma-social",
+    "name": "Existam",
+    "slug": "Existam",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/images/icon.png",
@@ -20,7 +20,7 @@
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff",
-        "package": "com.msweb.plataforma_social"
+        "package": "com.skris93.friendshare"
       }
     },
     "web": {
@@ -29,7 +29,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "a4a600d8-c719-4761-bbfa-263011b84be3"
+        "projectId": "51337d7d-34a2-4f52-adbd-05110d790c52"
       }
     }
   }
