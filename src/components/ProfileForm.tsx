@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { Button, Text, TextInput, View } from "./Themed";
 import { downloadAvatar, Profile } from "../lib/api";
@@ -14,7 +15,7 @@ import Avatar from "./Avatar";
 import * as ImagePicker from "expo-image-picker";
 import { FontAwesome } from "@expo/vector-icons";
 import Colors from "../constants/Colors";
-
+import { SimpleButton } from "./Themed";
 interface ProfileFormProps {
   profile: Profile | null;
   onSave: (updatedProfile: Profile, avatarUpdated: boolean) => void;
@@ -75,24 +76,20 @@ export default function ProfileForm({
                 </View>
                 <Avatar uri={avatarUrl} size={120} />
               </TouchableOpacity>
-              <Text style={styles.label}>Nombre de usuario</Text> 
+              <Text style={styles.label}>Username</Text>
               <TextInput
                 style={styles.textInput}
-                placeholder="Nombre de usuario"
+                placeholder="Username"
                 value={username}
                 onChangeText={setUsername}
               />
             </View>
 
             <View style={styles.input}>
-              <Button
-                title="Guardar cambios"
-                onPress={handleSubmit}
-                disabled={loading || !username}
-              />
+              <SimpleButton title="Save" onPress={handleSubmit} />
             </View>
             <View style={styles.input}>
-              <Button title="Cerrar sesión" onPress={onLogout} />
+              <SimpleButton title="Logout" onPress={onLogout} />
             </View>
           </View>
         </TouchableWithoutFeedback>
@@ -110,29 +107,29 @@ const styles = StyleSheet.create({
   },
   input: {
     paddingVertical: 8,
-    position: 'relative',
+    position: "relative",
   },
   label: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#000', 
+    fontWeight: "600",
+    color: "#fff",
     marginVertical: 16,
   },
   textInput: {
     borderWidth: 1,
-    borderColor: 'gray',
+    borderColor: "gray",
     padding: 8,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   avatarButton: {
     alignItems: "center",
-    position: 'relative', // add relative positioning here
+    position: "relative", // add relative positioning here
     marginBottom: 16,
     width: "40%",
     alignSelf: "center",
   },
   iconChange: {
-    position: 'absolute', // absolute positioning
+    position: "absolute", // absolute positioning
     top: 10, // position it on top right corner of Avatar
     right: 10,
     zIndex: 1,
@@ -140,6 +137,24 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     backgroundColor: Colors.light.background,
     borderWidth: 1,
-    borderColor: 'black',
+    borderColor: "black",
+  },
+  followingButton: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: 100,
+    paddingVertical: 8,
+    borderRadius: 7,
+    borderWidth: 1,
+  },
+  followButton: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: 100,
+    paddingVertical: 8,
+    borderRadius: 7,
+  },
+  followButtonText: {
+    fontWeight: "bold",
   },
 });

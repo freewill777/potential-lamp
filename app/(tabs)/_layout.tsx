@@ -19,7 +19,7 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const { profile } = useUserInfo()
+  const { profile } = useUserInfo();
 
   return (
     <Tabs
@@ -31,24 +31,26 @@ export default function TabLayout() {
       <Tabs.Screen
         name={SCREENS.HOME}
         options={{
-          title: "Inicio",
-          headerTitle: "Plataforma Social",
+          title: "Home",
+          headerTitle: "Existam",
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
         }}
       />
       <Tabs.Screen
         name={SCREENS.MESSAGES}
         options={{
-          title: "Mensajes",
-          headerTitle: "Mensajes",
-          tabBarIcon: ({ color }) => <TabBarIcon name="comment" color={color} />,
+          title: "Messenger",
+          headerTitle: "Messenger",
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="comment" color={color} />
+          ),
         }}
       />
-       <Tabs.Screen
+      <Tabs.Screen
         name={SCREENS.PROFILE}
         options={{
-          title: "Perfil",
-          headerTitle: profile?.username || '',
+          title: "Profile",
+          headerTitle: profile?.username || "",
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
         }}
       />

@@ -4,7 +4,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
   return {
     ...config,
     slug: "supabook",
-    name: "Plataforma Social",
+    name: "Existam Platform",
     extra: {
       ...config.extra,
       // Add your custom config here

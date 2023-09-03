@@ -8,6 +8,7 @@ import {
   Text as DefaultText,
   TextInput as DefaultTextInput,
   View as DefaultView,
+  TouchableOpacity,
 } from "react-native";
 
 import Colors from "../constants/Colors";
@@ -67,6 +68,26 @@ export function Card(props: ViewProps) {
 export function Button(props: DefaultButton["props"]) {
   const color = useThemeColor({}, "primary");
   return <DefaultButton color={color} {...props} />;
+}
+
+export function SimpleButton(props: DefaultButton["props"]) {
+  const styles = {
+    followingButton: {
+      justifyContent: "center",
+      alignItems: "center",
+      paddingVertical: 8,
+      borderRadius: 7,
+      borderWidth: 1,
+    },
+    followButtonText: {
+      fontWeight: "bold",
+    },
+  };
+  return (
+    <TouchableOpacity style={styles.followingButton} {...props}>
+      <Text style={styles.followButtonText}>{props.title}</Text>
+    </TouchableOpacity>
+  );
 }
 
 export function TextInput(props: DefaultTextInput["props"]) {
