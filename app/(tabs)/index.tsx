@@ -70,7 +70,9 @@ export default function TabOneScreen() {
 
   return (
     <View style={styles.container}>
-      <Stories />
+      {/* <View>
+        <Stories />
+      </View> */}
       <AddPostForm theme={theme} onSubmit={handleSubmit} />
       <View lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       <FlatList

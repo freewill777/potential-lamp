@@ -13,6 +13,7 @@ import { AuthProvider, useUserInfo } from "../src/lib/userContext";
 import { SCREENS } from "../src/constants/Screens";
 import { StatusBar } from "expo-status-bar";
 import * as ImagePicker from "expo-image-picker";
+import { NavigationContainer } from "@react-navigation/native";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -66,14 +67,6 @@ function AppStack() {
               headerShown: true,
               title: route.params.username,
             })}
-          />
-          <Stack.Screen
-            name={SCREENS.STORY}
-            options={{
-              title: "",
-              headerTransparent: true,
-              headerTintColor: "white",
-            }}
           />
         </Stack>
       </ThemeProvider>

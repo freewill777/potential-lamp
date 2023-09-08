@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Avatar from "./Avatar";
 import { supabase } from "../lib/supabase";
 import Colors from "../../enums";
+import { Video } from "expo-av";
 
 interface PostCardProps {
   post: Post;
@@ -79,7 +80,12 @@ export default function PostCard({
 
   return (
     <Card style={[styles.container, containerStyles]}>
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
         <View>
           <Card style={styles.header}>
             <Avatar uri={avatarUrl} />
@@ -123,7 +129,15 @@ export default function PostCard({
       </View>
       {post.image && (
         <Card style={styles.imageContainer}>
-          <Image source={{ uri: post.image }} style={styles.image} />
+          {post.image?.includes(".mov") ? (
+            <Video
+              source={{ uri: post.image }}
+              style={styles.image}
+              useNativeControls
+            />
+          ) : (
+            <Image source={{ uri: post.image }} style={styles.image} />
+          )}
         </Card>
       )}
     </Card>
@@ -141,6 +155,8 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 10,
     // borderColor: "red",
     borderWidth: 1,
+    borderRadius: 10,
+    padding: 5,
   },
   avatar: {
     width: 32,
@@ -181,8 +197,8 @@ const styles = StyleSheet.create({
     height: 400,
     marginTop: 8,
     borderRadius: 10,
-    marginHorizontal: 10,
-    marginBottom: 16,
+    marginHorizontal: 20,
+    marginBottom: 24,
   },
   image: {
     width: "100%",

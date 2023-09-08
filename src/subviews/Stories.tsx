@@ -20,7 +20,6 @@ const handleTakePhoto = async () => {
   const result = await ImagePicker.launchCameraAsync({
     mediaTypes: ImagePicker.MediaTypeOptions.All,
     allowsEditing: true,
-    quality: 0.1,
   });
   if (!result.canceled) {
     // setAvatarUrl(result.assets[0].uri);
@@ -44,7 +43,7 @@ const Stories = () => {
       handleTakePhoto();
     } else {
       //@ts-ignore
-      navigation.navigate(SCREENS.STORY, { id: item.id });
+      navigation.navigate(SCREENS.REEL, { id: item.id });
     }
   };
 
@@ -62,7 +61,7 @@ const Stories = () => {
               padding: item.key !== 1 ? 2 : 3,
               backgroundColor: "#6AB3AC",
               marginTop: 12,
-              marginBottom: 33,
+              marginBottom: 8,
               marginHorizontal: 8,
               borderRadius: 64,
             }}
@@ -77,12 +76,12 @@ const Stories = () => {
               {item.key !== 1 ? (
                 <Image
                   source={{ uri: `https://random.imagecdn.app/100/100` }}
-                  style={{ width: 56, height: 56, borderRadius: 64 }}
+                  style={{ width: 64, height: 64, borderRadius: 64 }}
                 />
               ) : (
                 <AntDesign
                   name="plus"
-                  size={30}
+                  size={38}
                   color="#5FA190"
                   style={{ padding: 12 }}
                 />

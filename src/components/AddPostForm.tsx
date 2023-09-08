@@ -11,7 +11,8 @@ import {
 import { Button, Card, SimpleButton, useThemeColor } from "./Themed";
 import * as ImagePicker from "expo-image-picker";
 import Colors from "../../enums";
-
+import { Video } from "expo-av";
+import { Image } from "react-native";
 interface Props {
   onSubmit: (content: string, image: string) => void;
   theme: "light" | "dark";
@@ -88,10 +89,40 @@ export default function AddPostForm({ onSubmit, theme }: Props) {
             )}
           </Pressable>
         </View>
-        <SimpleButton inverted title="Publish" onPress={handleSubmit} />
+        <View style={{ flexDirection: "row", columnGap: 3 }}>
+          {image && (
+            <SimpleButton
+              //
+              danger
+              title="Discard"
+              onPress={() => setImage("")}
+            />
+          )}
+          <SimpleButton
+            //
+            inverted
+            title="Publish"
+            onPress={handleSubmit}
+          />
+        </View>
       </Card>
 
-      {image && (
+      {image && image?.includes(".mov") && (
+        <View style={{ position: "relative" }}>
+          <Video
+            source={{ uri: image }}
+            style={styles.image}
+            useNativeControls
+          />
+          <TouchableOpacity
+            style={[styles.imageButton, { position: "absolute", margin: 6 }]}
+            onPress={() => setImage("")}
+          >
+            <Feather name="x" size={16} color="black" />
+          </TouchableOpacity>
+        </View>
+      )}
+      {image && !image?.includes(".mov") && (
         <ImageBackground source={{ uri: image }} style={styles.image}>
           <TouchableOpacity
             style={styles.imageButton}
@@ -101,6 +132,7 @@ export default function AddPostForm({ onSubmit, theme }: Props) {
           </TouchableOpacity>
         </ImageBackground>
       )}
+      <View style={{ height: 10 }}></View>
     </Card>
   );
 }

@@ -1,4 +1,5 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { Feather } from "@expo/vector-icons";
 
 import { Tabs } from "expo-router";
 import { useColorScheme, Image } from "react-native";
@@ -19,6 +20,13 @@ function TabBarIcon(props: {
   return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
 }
 
+function TabBarIconTV(props: {
+  name: React.ComponentProps<typeof Feather>["name"];
+  color: string;
+}) {
+  return <Feather size={28} style={{ marginBottom: -3 }} {...props} />;
+}
+
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const { profile } = useUserInfo();
@@ -28,6 +36,7 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: Colors.TurquoiseLight,
         headerShadowVisible: false,
+        headerBackgroundContainerStyle: { height: 10 },
       }}
     >
       <Tabs.Screen
@@ -61,6 +70,15 @@ export default function TabLayout() {
           title: "Profile",
           headerTitle: profile?.username || "",
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name={SCREENS.REEL}
+        options={{
+          title: "Reels",
+          headerTransparent: true,
+          headerTitle: "",
+          tabBarIcon: ({ color }) => <TabBarIconTV name="tv" color={color} />,
         }}
       />
     </Tabs>
