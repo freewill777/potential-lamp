@@ -79,6 +79,7 @@ export default function TabLayout() {
           headerTransparent: true,
           headerTitle: "",
           tabBarIcon: ({ color }) => <TabBarIconTV name="tv" color={color} />,
+          unmountOnBlur: true,
         }}
       />
     </Tabs>

@@ -1,130 +1,98 @@
-import {
-  Dimensions,
-  TouchableOpacity,
-  View,
-  Image,
-  Text,
-  ScrollView,
-  SafeAreaView,
-  FlatList,
-  StyleSheet,
-} from "react-native";
-import SwiperFlatList from "react-native-swiper-flatlist";
-import { SwiperFlatListWithGestureHandler } from "react-native-swiper-flatlist/WithGestureHandler";
-import { StatusBar } from "expo-status-bar";
-import { FontAwesome } from "@expo/vector-icons";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Video } from "expo-av";
-import { useRef } from "react";
+import React, { useRef, useState, useEffect } from 'react';
+import { Dimensions, TouchableOpacity, View, Image, Text, SafeAreaView, FlatList, StyleSheet } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { FontAwesome } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Video } from 'expo-av';
 
-const { width, height } = Dimensions.get("window");
+const { width, height } = Dimensions.get('window');
 
 const Reel = () => {
-  const videoRef = useRef(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const videoRefs = useRef([]);
+  const flatListRef = useRef(null);
+
+  useEffect(() => {
+    videoRefs.current.forEach((ref, index) => {
+      if (index === activeIndex) {
+        ref.playAsync();
+      } else {
+        ref.pauseAsync();
+      }
+    });
+  }, [activeIndex]);
+
+  useEffect(() => {
+    if (activeIndex !== videoRefs.current.length - 1) {
+      flatListRef.current.scrollToIndex({ index: activeIndex, animated: true });
+    } else {
+      setActiveIndex(0);
+    }
+  }, [activeIndex]);
+
+  const handleViewableItemsChanged = useRef(({ viewableItems }) => {
+    setActiveIndex(viewableItems[0].index);
+  });
+
+  const viewabilityConfig = useRef({ viewAreaCoveragePercentThreshold: 50 });
+
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="dark" />
-      <SwiperFlatListWithGestureHandler
-        autoplay
-        autoplayDelay={5}
-        autoplayLoop
-        vertical
-        snapToAlignment="start"
-        snapToInterval={height}
-      >
-        {[1, 2, 3, 4].map((_story, index) => (
-          <SafeAreaView style={[styles.child]} key={index}>
+      <StatusBar style='dark' />
+      <FlatList
+        ref={flatListRef}
+        data={[1, 2, 3, 4]}
+        renderItem={({ item, index }) => (
+          <View style={styles.child}>
+
             <Video
+              ref={(ref) => (videoRefs.current[index] = ref)}
               source={{
-                uri: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4",
+                uri: 'https://sample-videos.com/video123/mp4/240/big_buck_bunny_240p_1mb.mp4',
               }}
               style={{ width, height, marginTop: 50 }}
-            />
-            <View
-              style={{
-                flex: 1,
-                width: 500,
-                height: 500,
-                justifyContent: "flex-end",
-                flexWrap: "wrap-reverse",
-                position: "absolute",
+              onPlaybackStatusUpdate={(status) => {
+                if (status.didJustFinish) {
+                  setActiveIndex((prevIndex) => (prevIndex + 1) % videoRefs.current.length);
+                }
               }}
-            >
-              <View
-                style={{
-                  flex: 1,
-                  width: 120,
-                }}
-              >
-                <TouchableOpacity
-                  style={{ flexDirection: "row", alignItems: "flex-end" }}
-                >
-                  <MaterialCommunityIcons
-                    name={"movie-plus-outline"}
-                    size={24}
-                    color={"#0f4358"}
-                    style={{ backgroundColor: "#fff", padding: 10 }}
-                  />
-                  {[].length >= 0 && (
-                    <Text style={{ marginHorizontal: 10 }}>0</Text>
-                  )}
-                </TouchableOpacity>
-              </View>
-              <View
-                style={{
-                  flex: 1,
-                  width: 120,
-                }}
-              >
-                <TouchableOpacity
-                  style={{ flexDirection: "row", alignItems: "flex-end" }}
-                >
-                  <FontAwesome
-                    name={true ? "heart" : "heart-o"}
-                    size={24}
-                    color={"#0f4358"}
-                    style={{ backgroundColor: "#fff", padding: 10 }}
-                  />
-                  {[].length >= 0 && (
-                    <Text style={{ marginHorizontal: 10 }}>0</Text>
-                  )}
-                </TouchableOpacity>
-              </View>
-              <View
-                style={{
-                  flex: 1,
-                  width: 120,
-                }}
-              >
-                <TouchableOpacity>
-                  <FontAwesome
-                    name="trash-o"
-                    size={24}
-                    color={"#0f4358"}
-                    style={{
-                      backgroundColor: "#fff",
-                      padding: 10,
-                    }}
-                  />
-                </TouchableOpacity>
-              </View>
-            </View>
-          </SafeAreaView>
-        ))}
-      </SwiperFlatListWithGestureHandler>
+            />
+            <Text>{index}</Text>
+            <ControlButtons />
+          </View>
+        )}
+        onViewableItemsChanged={handleViewableItemsChanged.current}
+        viewabilityConfig={viewabilityConfig.current}
+        snapToInterval={height}
+        decelerationRate='fast'
+        vertical
+      />
     </SafeAreaView>
   );
 };
 
+const ControlButtons = () => (
+  <View style={styles.controlButtonsContainer}>
+    <ControlButton icon='comment' />
+    <ControlButton icon='heart' />
+    <ControlButton icon='trash-o' />
+  </View>
+);
+
+const ControlButton = ({ icon }) => (
+  <TouchableOpacity style={styles.controlButton}>
+    <FontAwesome name={icon} size={24} color='#0f4358' style={styles.icon} />
+    <Text style={styles.text}>0</Text>
+  </TouchableOpacity>
+);
+
 export default Reel;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width,
-    height,
-    position: "relative",
-  },
-  child: { width, height, justifyContent: "center" },
-  text: { fontSize: width * 0.5, textAlign: "center" },
+  container: { flex: 1, width, height, position: 'relative' },
+  child: { width, height, justifyContent: 'center' },
+  text: { marginHorizontal: 10 },
+  controlButtonsContainer: { position: 'absolute', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', right: 10, top: 10 },
+  controlButton: { flexDirection: 'column', alignItems: 'center', marginVertical: 10 },
+  icon: { padding: 10 },
 });
