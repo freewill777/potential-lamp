@@ -17,6 +17,7 @@ interface Props {
   onSubmit: (content: string, image: string) => void;
   theme: "light" | "dark";
 }
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function AddPostForm({ onSubmit, theme }: Props) {
   const [content, setContent] = useState("");
@@ -74,18 +75,29 @@ export default function AddPostForm({ onSubmit, theme }: Props) {
           <TouchableOpacity onPress={handleTakePhoto}>
             <Feather name="camera" size={24} color={Colors.BlackBlue} />
           </TouchableOpacity>
-          <Pressable onPress={() => {}}>
+          <Pressable onPress={() => { }}>
             {({ pressed }) => (
               <MaterialIcons
                 name="addchart"
                 size={24}
                 color={Colors.BlackBlue}
                 style={{
-                  marginRight: 15,
                   marginTop: 1,
                   opacity: pressed ? 0.5 : 1,
                 }}
               />
+            )}
+          </Pressable>
+          <Pressable onPress={() => { }}>
+            {({ pressed }) => (
+              <MaterialCommunityIcons name="movie-plus-outline" size={24}
+                color={Colors.BlackBlue}
+                style={{
+                  marginRight: 15,
+                  marginTop: 1,
+                  opacity: pressed ? 0.5 : 1,
+                }} />
+
             )}
           </Pressable>
         </View>

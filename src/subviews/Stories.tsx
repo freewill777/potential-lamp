@@ -43,7 +43,7 @@ const Stories = () => {
       handleTakePhoto();
     } else {
       //@ts-ignore
-      navigation.navigate(SCREENS.REEL, { id: item.id });
+      navigation.navigate(SCREENS.REELS, { id: item.id });
     }
   };
 
