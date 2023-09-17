@@ -5,6 +5,8 @@ export type Likes = Awaited<ReturnType<typeof fecthLikes>>;
 export type Like = Likes[number];
 export type Posts = Awaited<ReturnType<typeof fetchPosts>>;
 export type Post = Posts[number];
+export type Reels = Awaited<ReturnType<typeof fetchReels>>;
+export type Reel = Reels[number];
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 export type Contacts = Awaited<ReturnType<typeof fetchContacts>>;
 export type Contact = Contacts[number];
@@ -35,6 +37,20 @@ export const fetchPosts = async () => {
   const { data, error } = await supabase
     .from("posts")
     .select("*, profile: profiles(username, avatar_url)")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.log("error", error);
+    return [];
+  }
+  // console.log(data)
+  return data;
+};
+
+export const fetchReels = async () => {
+  const { data, error } = await supabase
+    .from("reels")
+    .select("*")
     .order("created_at", { ascending: false });
 
   if (error) {

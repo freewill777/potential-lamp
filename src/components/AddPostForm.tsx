@@ -12,7 +12,7 @@ import { Button, Card, SimpleButton, useThemeColor } from "./Themed";
 import * as ImagePicker from "expo-image-picker";
 import Colors from "../../enums";
 import { Video } from "expo-av";
-import { Image } from "react-native";
+
 interface Props {
   onSubmit: (content: string, image: string) => void;
   theme: "light" | "dark";

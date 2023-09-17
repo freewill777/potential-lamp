@@ -134,6 +134,7 @@ export default function AuthForm({
     </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

@@ -66,4 +66,4 @@ const HeaderButtonsBar = () => {
   );
 };
 
-export default HeaderButtonsBar;
+export { HeaderButtonsBar };
