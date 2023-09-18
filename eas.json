@@ -10,9 +10,9 @@
     "preview": {
       "distribution": "internal",
       "env": {
-        "API_URL": "XXX",
-        "SUPABASE_URL": "XXX",
-        "SUPABASE_ANON_KEY": "XXX"
+        "API_URL": "https://znubrljvuaprjaubblwi.supabase.co",
+        "SUPABASE_URL": "https://znubrljvuaprjaubblwi.supabase.co",
+        "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpudWJybGp2dWFwcmphdWJibHdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTM1OTE2NTEsImV4cCI6MjAwOTE2NzY1MX0.fD7CJo-gx_hfwmqOaJv8dz2K2jPWwMpHh013WwzQDfk"
       },
       "android": {
         "buildType": "apk"
@@ -20,7 +20,7 @@
     },
     "production": {
       "env": {
-        "API_URL": "XXX"
+        "API_URL": "https://znubrljvuaprjaubblwi.supabase.co"
       },
       "android": {
         "buildType": "apk"

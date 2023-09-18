@@ -3,17 +3,17 @@ import {
   Text,
   View,
   Dimensions,
-  StatusBar,
   Image,
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
+import { Feather, FontAwesome5 } from "@expo/vector-icons";
+import { StatusBar } from "expo-status-bar";
 import { Video, ResizeMode } from "expo-av";
 import { useEffect, useRef, useState } from "react";
 import { SwiperFlatList } from "react-native-swiper-flatlist";
-import { Reels, fetchReels } from "../../src/lib/api";
-import { Feather } from "@expo/vector-icons";
-import { FontAwesome5 } from "@expo/vector-icons";
+import { Reels, fetchReels, Reel } from "../../src/lib/api";
+import Colors from "../../enums";
 
 const { width, height } = Dimensions.get("window");
 
@@ -22,6 +22,7 @@ export default function ReelsScreen() {
   const [modalOpen, setModalOpen] = useState(false);
   const video = useRef(null);
   const [currindex, SetCurrindex] = useState(0);
+  const flatListRef = useRef(null);
 
   useEffect(() => {
     fetchReels().then((data) => setReels(data));
@@ -33,7 +34,19 @@ export default function ReelsScreen() {
     }
   }, [currindex]);
 
-  const renderItem = ({ item, index }) => {
+  useEffect(() => {
+    if (flatListRef.current && currindex < reels.length) {
+      flatListRef.current.scrollToIndex({ index: currindex, animated: true });
+    }
+  }, [currindex]);
+
+  const onPlaybackStatusUpdate = (playbackStatus) => {
+    if (playbackStatus.didJustFinish) {
+      SetCurrindex(currindex + 1);
+    }
+  };
+
+  const renderItem = ({ item, index }: { item: Reel; index: number }) => {
     return (
       <View style={{ flex: 1, height: height }}>
         <Video
@@ -44,7 +57,8 @@ export default function ReelsScreen() {
           }}
           resizeMode={ResizeMode.COVER}
           isLooping
-          shouldPlay={currindex == index}
+          shouldPlay={currindex === index}
+          onPlaybackStatusUpdate={onPlaybackStatusUpdate}
         />
 
         <View style={styles.bottomView}>
@@ -60,7 +74,15 @@ export default function ReelsScreen() {
             >
               Sahil Alagiya
             </Text>
-            <TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                borderColor: Colors.White,
+                borderWidth: 1,
+                paddingHorizontal: 10,
+                paddingVertical: 1,
+                borderRadius: 3,
+              }}
+            >
               <Text style={{ color: "#fff" }}>Follow</Text>
             </TouchableOpacity>
           </View>
@@ -71,26 +93,49 @@ export default function ReelsScreen() {
               </Text>
             </View>
 
-            <View style={{ ...styles.flexHorizontal, marginVertical: 8 }}>
+            <View style={{ ...styles.flexHorizontal, marginBottom: 8 }}>
               <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Feather name="heart" size={30} color={"#fff"} />
-                <Feather
-                  name="book"
-                  style={{ marginHorizontal: 8 }}
-                  size={30}
-                  color="#fff"
-                />
-                <Feather name="filter" size={30} color="#fff" />
-                <Feather
-                  name="radio"
-                  size={30}
-                  color="#fff"
-                  style={{ marginHorizontal: 8 }}
-                />
-                <FontAwesome5 name="ellipsis-h" size={30} color="#fff" />
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <Feather name="heart" size={20} color="#fff" />
+                    <Text
+                      style={{
+                        marginLeft: 4,
+                        fontSize: 15,
+                        color: Colors.White,
+                      }}
+                    >
+                      94.6K
+                    </Text>
+                  </View>
+
+                  {/* <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginLeft: 10,
+                    }}
+                  >
+                    <Feather name="filter" size={20} color="#fff" />
+                    <Text
+                      style={{
+                        marginLeft: 4,
+                        fontSize: 15,
+                        color: Colors.White,
+                      }}
+                    >
+                      112
+                    </Text>
+                  </View> */}
+                </View>
               </View>
 
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
+              {/* <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Feather name="heart" size={15} color="#fff" />
                   <Text style={{ marginLeft: 4 }}>94.6K</Text>
@@ -100,7 +145,7 @@ export default function ReelsScreen() {
                   <Feather name="filter" size={15} color="#fff" />
                   <Text style={{ marginLeft: 4 }}>112</Text>
                 </View>
-              </View>
+              </View> */}
             </View>
           </View>
         </View>
@@ -113,13 +158,26 @@ export default function ReelsScreen() {
   };
 
   if (!reels.length) {
-    return <ActivityIndicator />;
+    return (
+      <View
+        style={{
+          height,
+          width,
+          flexDirection: "row",
+          justifyContent: "center",
+          alignContent: "center",
+        }}
+      >
+        <ActivityIndicator />
+      </View>
+    );
   }
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
+      <StatusBar style="dark" />
       <SwiperFlatList
+        ref={flatListRef}
         vertical={true}
         renderItem={renderItem}
         data={reels}
@@ -133,12 +191,12 @@ export default function ReelsScreen() {
         snapToInterval={height}
       />
 
-      <View style={{ position: "absolute", top: 40, left: 16 }}>
+      {/* <View style={{ position: "absolute", top: 40, left: 16 }}>
         <Text style={styles.textStyle}>Reels</Text>
-      </View>
-      <View style={{ position: "absolute", top: 40, right: 16 }}>
+      </View> */}
+      {/* <View style={{ position: "absolute", top: 40, right: 16 }}>
         <Feather name="camera" size={30} color="#fff" />
-      </View>
+      </View> */}
     </View>
   );
 
@@ -172,8 +230,9 @@ const styles = StyleSheet.create({
   bottomView: {
     flex: 1,
     justifyContent: "flex-end",
-    paddingVertical: 32,
+    paddingTop: 32,
     paddingHorizontal: 16,
+    paddingBottom: 170,
   },
   profile: {
     height: 35,

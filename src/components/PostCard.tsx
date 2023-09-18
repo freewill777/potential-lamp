@@ -1,17 +1,18 @@
 import { Alert, Image, StyleSheet, TouchableOpacity, View } from "react-native";
-import { Likes, Post, Profile, downloadAvatar, fecthLikes } from "../lib/api";
-import { Card, Text, useThemeColor } from "./Themed";
-import { FontAwesome } from "@expo/vector-icons";
-import { useUserInfo } from "../lib/userContext";
+import { useNavigation } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { Video } from "expo-av";
+import { FontAwesome } from "@expo/vector-icons";
+import { Card, Text } from "./Themed";
+import { useUserInfo } from "../lib/userContext";
 import Avatar from "./Avatar";
 import { supabase } from "../lib/supabase";
 import Colors from "../../enums";
-import { Video } from "expo-av";
+import { Likes, Post, Profile, downloadAvatar, fecthLikes } from "../lib/api";
 
-interface PostCardProps {
+export interface PostCardProps {
   post: Post;
-  onDelete: () => void;
+  onDelete?: () => void;
   containerStyles?: any;
 }
 
@@ -20,11 +21,11 @@ export default function PostCard({
   onDelete,
   containerStyles,
 }: PostCardProps) {
-  const color = useThemeColor({}, "primary");
   const profile = post.profile as Profile;
   const user = useUserInfo();
   const [avatarUrl, setAvatarUrl] = useState("");
   const [likes, setLikes] = useState<Likes>([]);
+  const navigation = useNavigation();
 
   const userLikesPost = useMemo(
     () => likes?.find((like) => like.user_id === user?.profile?.id),
@@ -50,7 +51,6 @@ export default function PostCard({
     if (!user.profile) return;
 
     if (userLikesPost) {
-      // delete this
       const { error } = await supabase
         .from("post_likes")
         .delete()
@@ -74,7 +74,7 @@ export default function PostCard({
         text: "Cancel",
         style: "cancel",
       },
-      { text: "OK", onPress: () => onDelete() },
+      { text: "OK", onPress: () => onDelete?.() },
     ]);
   }
 
@@ -88,8 +88,18 @@ export default function PostCard({
       >
         <View>
           <Card style={styles.header}>
-            <Avatar uri={avatarUrl} />
-            <Text style={styles.username}>{profile?.username}</Text>
+            <TouchableOpacity
+              style={styles.flex}
+              onPress={() => {
+                // @ts-ignore
+                navigation.navigate("visitingProfile", {
+                  userId: post.user_id,
+                });
+              }}
+            >
+              <Avatar uri={avatarUrl} />
+              <Text style={styles.username}>{profile?.username}</Text>
+            </TouchableOpacity>
           </Card>
           {post?.content && (
             <Card style={styles.content}>
@@ -145,6 +155,7 @@ export default function PostCard({
 }
 
 const styles = StyleSheet.create({
+  flex: { flexDirection: "row", alignItems: "center" },
   container: {
     marginVertical: 8,
     borderColor: "#99a1a8",
@@ -153,7 +164,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.GrayBeige,
     borderBottomRightRadius: 10,
     borderBottomLeftRadius: 10,
-    // borderColor: "red",
     borderWidth: 1,
     borderRadius: 10,
     padding: 5,

@@ -10,6 +10,8 @@ export type Reel = Reels[number];
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 export type Contacts = Awaited<ReturnType<typeof fetchContacts>>;
 export type Contact = Contacts[number];
+export type Messages = Awaited<ReturnType<typeof fetchMessages>>;
+export type Message = Messages[number];
 
 export const downloadAvatar = async (path: string): Promise<string> => {
   try {
@@ -103,5 +105,52 @@ export const fetchMessages = async (userId: string, contactId: string) => {
   }
 };
 
-export type Messages = Awaited<ReturnType<typeof fetchMessages>>;
-export type Message = Messages[number];
+export const sendFriendRequest = async (
+  fromUserId: string,
+  toUserId: string
+) => {
+  const { error } = await supabase
+    .from("friends")
+    .insert([
+      { from_user_id: fromUserId, to_user_id: toUserId, status: "pending" },
+    ]);
+  if (error) throw error;
+};
+
+export const acceptFriendRequest = async (
+  fromUserId: string,
+  toUserId: string
+) => {
+  const { error } = await supabase
+    .from("friends")
+    .update({ status: "accepted" })
+    .eq("from_user_id", fromUserId)
+    .eq("to_user_id", toUserId);
+  if (error) throw error;
+};
+
+export const getFriends = async (userId: string) => {
+  const { data, error } = await supabase
+    .from("friends")
+    .select("*")
+    .or(`from_user_id.eq.${userId},to_user_id.eq.${userId}`)
+    .eq("status", "accepted");
+  if (error) throw error;
+  return data;
+};
+
+export const deleteFriend = async (fromUserId: string, toUserId: string) => {
+  const { error } = await supabase
+    .from("friends")
+    .delete()
+    .or(`from_user_id.eq.${fromUserId},to_user_id.eq.${fromUserId}`)
+    .or(`from_user_id.eq.${toUserId},to_user_id.eq.${toUserId}`);
+  if (error) throw error;
+};
+
+export const handleSendRequest = (userId: string) => {};
+export const handleAcceptRequest = (userId: string) => {};
+export const handleRejectRequest = (userId: string) => {};
+export const handleCancelRequest = (userId: string) => {};
+export const handleUnfriend = (userId: string) => {};
+export const handleFriendshipStatus = (userId: string) => {};
