@@ -5,35 +5,60 @@ import { useState } from "react";
 import { Text } from "./Themed";
 const { height } = Dimensions.get("window");
 
-const FloatingActionButtonSingle = ({ style, onPress, Icon, text }: any) => {
+const FloatingActionButton = ({
+  onPress,
+  showMoreAddOptions,
+  setShowMoreAddOptions,
+}: {
+  onPress: Function;
+  showMoreAddOptions: boolean;
+  setShowMoreAddOptions: Function;
+}) => {
   return (
-    <View style={{ flexDirection: "row", alignItems: "center" }}>
-      <Text style={{ color: "white", marginRight: 10 }}>{text}</Text>
-      <TouchableOpacity
-        style={[styles.fab, { backgroundColor: Colors.TurquoiseDark }, style]}
-        onPress={onPress}
-      >
-        {Icon ? (
-          <Icon />
-        ) : (
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Text style={{ color: Colors.BlackBlue, marginRight: 10 }}>
-              {text}
-            </Text>
-            <View
-              style={{
-                borderColor: Colors.GrayBeige,
-                backgroundColor: Colors.TurquoiseDark,
-                borderRadius: 50,
-                padding: 25,
-              }}
-            >
-              <MaterialIcons name="add" size={25} color={Colors.GrayBeige} />
-            </View>
-          </View>
-        )}
-      </TouchableOpacity>
-    </View>
+    <>
+      {!showMoreAddOptions && (
+        <FloatingActionButtonSingleRoot
+          onPress={() => setShowMoreAddOptions(!showMoreAddOptions)}
+          text=""
+        />
+      )}
+      {showMoreAddOptions && (
+        <View style={styles.overlay}>
+          <FloatingActionButtonSingleRoot
+            onPress={() => setShowMoreAddOptions(!showMoreAddOptions)}
+            text=""
+            onPhotoTaken={() => setShowMoreAddOptions(false)}
+          />
+          <FloatingActionButtonSingleRoot
+            style={{ marginVertical: height / 7 + 80, paddingRight: 7 }}
+            Icon={() => (
+              <Feather name="file" size={18} color={Colors.GrayBeige} />
+            )}
+            text="Create new story"
+            onPress={onPress}
+            onPhotoTaken={() => setShowMoreAddOptions(false)}
+          />
+          <FloatingActionButtonSingleRoot
+            style={{ marginVertical: height / 7 + 140, paddingRight: 7 }}
+            Icon={() => (
+              <Feather name="camera" size={18} color={Colors.GrayBeige} />
+            )}
+            text="Create new post"
+            onPress={onPress}
+            onPhotoTaken={() => setShowMoreAddOptions(false)}
+          />
+          <FloatingActionButtonSingleRoot
+            style={{ marginVertical: height / 7 + 200, paddingRight: 7 }}
+            Icon={() => (
+              <Feather name="tv" size={18} color={Colors.GrayBeige} />
+            )}
+            text="Create new reel"
+            onPress={onPress}
+            onPhotoTaken={() => setShowMoreAddOptions(false)}
+          />
+        </View>
+      )}
+    </>
   );
 };
 
@@ -42,6 +67,7 @@ const FloatingActionButtonSingleRoot = ({
   onPress,
   Icon,
   text,
+  onPhotoTaken,
 }: any) => {
   return (
     <TouchableOpacity style={[styles.fab, style]} onPress={onPress}>
@@ -85,50 +111,6 @@ const FloatingActionButtonSingleRoot = ({
         </View>
       )}
     </TouchableOpacity>
-  );
-};
-
-const FloatingActionButton = () => {
-  const [showMoreAddOptions, setShowMoreAddOptions] = useState(false);
-
-  return (
-    <>
-      {!showMoreAddOptions && (
-        <FloatingActionButtonSingleRoot
-          onPress={() => setShowMoreAddOptions(!showMoreAddOptions)}
-          text=""
-        />
-      )}
-      {showMoreAddOptions && (
-        <View style={styles.overlay}>
-          <FloatingActionButtonSingleRoot
-            onPress={() => setShowMoreAddOptions(!showMoreAddOptions)}
-            text=""
-          />
-          <FloatingActionButtonSingleRoot
-            style={{ marginVertical: height / 7 + 80, paddingRight: 7 }}
-            Icon={() => (
-              <Feather name="file" size={18} color={Colors.GrayBeige} />
-            )}
-            text="Create new story"
-          />
-          <FloatingActionButtonSingleRoot
-            style={{ marginVertical: height / 7 + 140, paddingRight: 7 }}
-            Icon={() => (
-              <Feather name="camera" size={18} color={Colors.GrayBeige} />
-            )}
-            text="Create new post"
-          />
-          <FloatingActionButtonSingleRoot
-            style={{ marginVertical: height / 7 + 200, paddingRight: 7 }}
-            Icon={() => (
-              <Feather name="tv" size={18} color={Colors.GrayBeige} />
-            )}
-            text="Create new reel"
-          />
-        </View>
-      )}
-    </>
   );
 };
 
