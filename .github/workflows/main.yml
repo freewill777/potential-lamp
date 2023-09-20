@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: AI Code Reviewer
-        uses: freewill777/ai-code-reviewer@main
+        uses: freewill777/potential-lamp@refact-4
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
