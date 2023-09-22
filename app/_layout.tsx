@@ -11,13 +11,16 @@ import { useColorScheme } from "react-native";
 import AuthScreen from "./auth";
 import { AuthProvider, useUserInfo } from "../src/lib/userContext";
 import { SCREENS } from "../src/constants/Screens";
+import { StatusBar } from "expo-status-bar";
+import * as ImagePicker from "expo-image-picker";
+import { NavigationContainer } from "@react-navigation/native";
 
 export { ErrorBoundary } from "expo-router";
 
 export default function RootLayout() {
-
   const [loaded, error] = useFonts({
     SpaceMono: require("../src/assets/fonts/SpaceMono-Regular.ttf"),
+    DMSans: require("../src/assets/fonts/DMSans-Regular.ttf"),
     ...FontAwesome.font,
   });
 
@@ -29,31 +32,42 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       {!loaded && <SplashScreen />}
-      {loaded &&  <AppStack /> }
+      {loaded && <AppStack />}
     </AuthProvider>
   );
 }
 
 function AppStack() {
-  const colorScheme = useColorScheme();
   const { session } = useUserInfo();
 
-  if (!session) {
-    return <AuthScreen />
-  }
+  const [_permission, requestPermission] = ImagePicker.useCameraPermissions();
 
+  useEffect(() => {
+    (async () => {
+      await requestPermission();
+    })();
+  }, []);
+
+  if (!session) {
+    return <AuthScreen />;
+  }
 
   return (
     <>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      <ThemeProvider value={DefaultTheme}>
+        <StatusBar style="dark" />
         <Stack>
           <Stack.Screen name={SCREENS.AUTH} options={{ headerShown: false }} />
           <Stack.Screen name={SCREENS.TABS} options={{ headerShown: false }} />
           {/* @ts-ignore */}
-          <Stack.Screen name={SCREENS.CHAT} options={({route}) => ({
-            headerShown: true, 
-            title: route.params.username
-          })} />
+          <Stack.Screen
+            name={SCREENS.CHAT}
+            //@ts-ignore
+            options={({ route }) => ({
+              headerShown: true,
+              title: route.params.username,
+            })}
+          />
         </Stack>
       </ThemeProvider>
     </>

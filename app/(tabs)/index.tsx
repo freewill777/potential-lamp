@@ -1,22 +1,22 @@
-import { Alert, FlatList, StyleSheet } from 'react-native'
-
-import { useEffect, useState } from 'react'
-import AddPostForm from '../../src/components/AddPostForm'
-import { View } from '../../src/components/Themed'
-import useColorScheme from '../../src/hooks/useColorScheme'
-import { Posts, fetchPosts } from '../../src/lib/api'
-import { supabase } from '../../src/lib/supabase'
-import PostCard from '../../src/components/PostCard'
-import { useUserInfo } from '../../src/lib/userContext'
+import { Alert, Dimensions, FlatList, StyleSheet, Text } from "react-native";
+import { useEffect, useState } from "react";
+import AddPostForm from "../../src/components/AddPostForm";
+import { View } from "../../src/components/Themed";
+import useColorScheme from "../../src/hooks/useColorScheme";
+import { Posts, fetchPosts } from "../../src/lib/api";
+import { supabase } from "../../src/lib/supabase";
+import PostCard from "../../src/components/PostCard";
+import { useUserInfo } from "../../src/lib/userContext";
+import Stories from "../../src/subviews/Stories";
 
 export default function TabOneScreen() {
-  const [posts, setPosts] = useState<Posts>([])
-  const theme = useColorScheme()
-  const { profile } = useUserInfo()
+  const [posts, setPosts] = useState<Posts>([]);
+  const theme = useColorScheme();
+  const { profile } = useUserInfo();
 
   useEffect(() => {
-    fetchPosts().then((data) => setPosts(data))
-  }, [profile])
+    fetchPosts().then((data) => setPosts(data));
+  }, [profile]);
 
   const handleSubmit = async (content: string, image: string) => {
     try {
@@ -32,6 +32,7 @@ export default function TabOneScreen() {
           name: fileName,
           type: `image/${fileExt}`,
         } as unknown as Blob;
+
         formData.append("file", photo);
 
         const { error } = await supabase.storage
@@ -42,6 +43,7 @@ export default function TabOneScreen() {
         const { data } = supabase.storage.from("posts").getPublicUrl(filePath);
         publicUrl = data.publicUrl;
       }
+
       const { data, error } = await supabase
         .from("posts")
         .insert({ content, image: publicUrl })
@@ -57,33 +59,44 @@ export default function TabOneScreen() {
   };
 
   const handleDeletePost = async (id: string) => {
-    const { error } = await supabase.from('posts').delete().eq('id', id)
+    const { error } = await supabase.from("posts").delete().eq("id", id);
     if (error) {
-      Alert.alert(error.message)
-      console.log(error)
+      Alert.alert(error.message);
+      console.log(error);
     } else {
-      setPosts(posts.filter((post) => post.id !== id))
+      setPosts(posts.filter((post) => post.id !== id));
     }
-  }
+  };
 
   return (
     <View style={styles.container}>
+      {/* <View>
+        <Stories />
+      </View> */}
       <AddPostForm theme={theme} onSubmit={handleSubmit} />
       <View lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       <FlatList
         keyExtractor={(item) => item.id}
         data={posts}
         contentContainerStyle={{ paddingTop: 8 }}
-        renderItem={({ item }) => (
-          <PostCard onDelete={() => handleDeletePost(item.id)} post={item} />
+        renderItem={({ item, index }) => (
+          <PostCard
+            onDelete={() => handleDeletePost(item.id)}
+            post={item}
+            containerStyles={index ? null : { borderTopWidth: 1 }}
+          />
         )}
       />
     </View>
-  )
+  );
 }
+
+const { width } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-})
+  child: { width, justifyContent: "center" },
+  text: { fontSize: width * 0.5, textAlign: "center" },
+});

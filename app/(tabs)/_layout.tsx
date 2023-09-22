@@ -1,12 +1,15 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { Feather } from "@expo/vector-icons";
 
 import { Tabs } from "expo-router";
-import { useColorScheme } from "react-native";
+import { useColorScheme, Image } from "react-native";
 
-import Colors from "../../src/constants/Colors";
 import { useUserInfo } from "../../src/lib/userContext";
 import { SCREENS } from "../../src/constants/Screens";
-
+import HeaderButtonsBar from "../../subcomponents/HeaderButtonsBar";
+import { Text } from "../../src/components/Themed";
+import { logoMainImage } from "../../src/components/AuthForm";
+import Colors from "../../enums";
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
  */
@@ -17,39 +20,66 @@ function TabBarIcon(props: {
   return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
 }
 
+function TabBarIconTV(props: {
+  name: React.ComponentProps<typeof Feather>["name"];
+  color: string;
+}) {
+  return <Feather size={28} style={{ marginBottom: -3 }} {...props} />;
+}
+
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const { profile } = useUserInfo()
+  const { profile } = useUserInfo();
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+        tabBarActiveTintColor: Colors.TurquoiseLight,
         headerShadowVisible: false,
+        headerBackgroundContainerStyle: { height: 10 },
       }}
     >
       <Tabs.Screen
         name={SCREENS.HOME}
         options={{
-          title: "Inicio",
-          headerTitle: "Plataforma Social",
+          title: "Home",
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+          headerRight: () => <HeaderButtonsBar />,
+          headerLeft: () => (
+            <Image
+              source={logoMainImage}
+              style={{ width: 70, height: 70, marginLeft: 10 }}
+            />
+          ),
+          headerTitle: "",
         }}
       />
       <Tabs.Screen
         name={SCREENS.MESSAGES}
         options={{
-          title: "Mensajes",
-          headerTitle: "Mensajes",
-          tabBarIcon: ({ color }) => <TabBarIcon name="comment" color={color} />,
+          title: "Messenger",
+          headerTitle: "",
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="comment" color={color} />
+          ),
         }}
       />
-       <Tabs.Screen
+      <Tabs.Screen
         name={SCREENS.PROFILE}
         options={{
-          title: "Perfil",
-          headerTitle: profile?.username || '',
+          title: "Profile",
+          headerTitle: profile?.username || "",
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name={SCREENS.REELS}
+        options={{
+          title: "Reels",
+          headerTransparent: true,
+          headerTitle: "",
+          tabBarIcon: ({ color }) => <TabBarIconTV name="tv" color={color} />,
+          unmountOnBlur: true,
         }}
       />
     </Tabs>
