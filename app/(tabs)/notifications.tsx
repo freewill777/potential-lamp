@@ -117,6 +117,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     overflow: "hidden",
     paddingHorizontal: 10,
+    borderColor: Colors.Gray,
+    borderWidth: 0.3,
   },
   image: {
     width: 60,

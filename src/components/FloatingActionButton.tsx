@@ -39,15 +39,6 @@ const FloatingActionButton = ({
             <FloatingActionButtonSingleRoot
               style={{ marginVertical: height / 7 + 80, paddingRight: 7 }}
               Icon={() => (
-                <Feather name="file" size={18} color={Colors.GrayBeige} />
-              )}
-              text="Create new story"
-              onPress={onPress}
-              onPhotoTaken={() => setShowMoreAddOptions(false)}
-            />
-            <FloatingActionButtonSingleRoot
-              style={{ marginVertical: height / 7 + 140, paddingRight: 7 }}
-              Icon={() => (
                 <Feather name="camera" size={18} color={Colors.GrayBeige} />
               )}
               text="Create new post"
@@ -55,11 +46,20 @@ const FloatingActionButton = ({
               onPhotoTaken={() => setShowMoreAddOptions(false)}
             />
             <FloatingActionButtonSingleRoot
-              style={{ marginVertical: height / 7 + 200, paddingRight: 7 }}
+              style={{ marginVertical: height / 7 + 140, paddingRight: 7 }}
               Icon={() => (
                 <Feather name="tv" size={18} color={Colors.GrayBeige} />
               )}
               text="Create new reel"
+              onPress={onPress}
+              onPhotoTaken={() => setShowMoreAddOptions(false)}
+            />
+            <FloatingActionButtonSingleRoot
+              style={{ marginVertical: height / 7 + 200, paddingRight: 7 }}
+              Icon={() => (
+                <Feather name="calendar" size={18} color={Colors.GrayBeige} />
+              )}
+              text="Create new event"
               onPress={onPress}
               onPhotoTaken={() => setShowMoreAddOptions(false)}
             />
@@ -135,13 +135,16 @@ const FloatingActionButtonSingleRootBack = ({
         <Text style={{ color: Colors.BlackBlue, marginRight: 10 }}>{text}</Text>
         <View
           style={{
-            borderColor: Colors.GrayBeige,
-            backgroundColor: Colors.TurquoiseDark,
+            backgroundColor: Colors.TurquoiseLight,
             borderRadius: 150,
             padding: 18,
           }}
         >
-          <MaterialIcons name="arrow-back" size={25} color={Colors.GrayBeige} />
+          <MaterialIcons
+            name="arrow-back"
+            size={25}
+            color={Colors.TurquoiseDark}
+          />
         </View>
       </View>
     </TouchableOpacity>

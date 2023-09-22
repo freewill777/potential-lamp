@@ -37,7 +37,7 @@ export default function TabOneScreen() {
           <PostCard
             onDelete={() => handleDeletePost(item.id)}
             post={item}
-            containerStyles={index ? null : { borderTopWidth: 1 }}
+            containerStyles={index ? null : { borderBottomWidth: 1 }}
           />
         )}
       />

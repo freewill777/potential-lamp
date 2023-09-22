@@ -1,9 +1,15 @@
 import { useNavigation } from "expo-router";
-import { Pressable, View, TextInput, StyleSheet } from "react-native";
+import {
+  Pressable,
+  View,
+  TextInput,
+  StyleSheet,
+  GestureResponderEvent,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 
-const HeaderButtonsBar = () => {
+const HeaderButtonsBar = ({ toggleDrawer }: { toggleDrawer: Function }) => {
   const { navigate } = useNavigation();
 
   return (
@@ -29,10 +35,10 @@ const HeaderButtonsBar = () => {
         {({ pressed }) => (
           <Ionicons
             name="md-menu"
-            size={24}
+            size={32}
             color="#696969"
             style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-            onPress={() => {}}
+            onPress={toggleDrawer as () => void}
           />
         )}
       </Pressable>
