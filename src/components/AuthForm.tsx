@@ -1,14 +1,12 @@
 import { useState } from "react";
 import {
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
   SafeAreaView,
   StyleSheet,
-  TouchableWithoutFeedback,
   Image,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
-import { Button, Text, TextInput, View } from "./Themed";
+import { Text, View, TextInput } from "./Themed";
 import { SimpleButton } from "./Themed";
 
 import type {
@@ -55,81 +53,79 @@ export default function AuthForm({
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.container}
       >
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={styles.inner}>
-            {/* <Text style={styles.title}>Social Media</Text> */}
-            <Image source={logoMainImage} style={{ width: 180, height: 180 }} />
-            {mode === "signUp" && (
-              <View style={styles.input}>
-                <TextInput
-                  placeholder="Username"
-                  value={username}
-                  onChangeText={setUsername}
-                />
-              </View>
-            )}
+        <View style={styles.inner}>
+          {/* <Text style={styles.title}>Social Media</Text> */}
+          <Image source={logoMainImage} style={{ width: 180, height: 180 }} />
+          {mode === "signUp" && (
             <View style={styles.input}>
               <TextInput
-                placeholder="Email"
-                value={email}
-                onChangeText={setEmail}
-                autoCapitalize="none"
-                keyboardType="email-address"
-                style={[
-                  styles.input,
-                  {
-                    borderColor: "#380a2a",
-                    borderWidth: 1,
-                    borderRadius: 5,
-                    paddingHorizontal: 10,
-                  },
-                ]}
-                placeholderTextColor={"#380a2a"}
+                placeholder="Username"
+                value={username}
+                onChangeText={setUsername}
               />
             </View>
-            <View style={styles.input}>
-              <TextInput
-                placeholder="Password"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry={true}
-                autoCapitalize="none"
-                placeholderTextColor={"#380a2a"}
-                style={[
-                  styles.input,
-                  {
-                    borderColor: "#380a2a",
-                    borderWidth: 1,
-                    borderRadius: 5,
-                    paddingHorizontal: 10,
-                  },
-                ]}
-              />
-            </View>
-            <View style={styles.input}>
-              <SimpleButton
-                title={mode === "login" ? "Log In" : "Register"}
-                onPress={handleSubmit}
-                disabled={loading || !email || !password}
-              />
-            </View>
-            <View style={styles.input}>
-              <SimpleButton
-                title={mode === "login" ? "Register" : "Log In"}
-                onPress={() => {
-                  setMode(mode === "login" ? "signUp" : "login");
-                  setSuccessfullSignup(false);
-                }}
-              />
-            </View>
-
-            {successfulSignup && mode === "signUp" && (
-              <Text style={styles.successText}>
-                Registration successfull. Redirecting...
-              </Text>
-            )}
+          )}
+          <View style={styles.input}>
+            <TextInput
+              placeholder="Email"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              style={[
+                styles.input,
+                {
+                  borderColor: "#380a2a",
+                  borderWidth: 1,
+                  borderRadius: 5,
+                  paddingHorizontal: 10,
+                },
+              ]}
+              placeholderTextColor={"#380a2a"}
+            />
           </View>
-        </TouchableWithoutFeedback>
+          <View style={styles.input}>
+            <TextInput
+              placeholder="Password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={true}
+              autoCapitalize="none"
+              placeholderTextColor={"#380a2a"}
+              style={[
+                styles.input,
+                {
+                  borderColor: "#380a2a",
+                  borderWidth: 1,
+                  borderRadius: 5,
+                  paddingHorizontal: 10,
+                },
+              ]}
+            />
+          </View>
+          <View style={styles.input}>
+            <SimpleButton
+              title={mode === "login" ? "Log In" : "Register"}
+              onPress={handleSubmit}
+              disabled={loading || !email || !password}
+            />
+          </View>
+          <View style={styles.input}>
+            <SimpleButton
+              title={mode === "login" ? "Register" : "Log In"}
+              onPress={() => {
+                setMode(mode === "login" ? "signUp" : "login");
+                setSuccessfullSignup(false);
+              }}
+            />
+          </View>
+
+          {successfulSignup && mode === "signUp" && (
+            <Text style={styles.successText}>
+              Registration successfull. Redirecting...
+            </Text>
+          )}
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
