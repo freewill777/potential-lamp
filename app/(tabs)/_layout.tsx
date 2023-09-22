@@ -1,4 +1,4 @@
-import { Image, Platform, SafeAreaView } from "react-native";
+import { Image, Platform, SafeAreaView, StyleSheet, View } from "react-native";
 import React, { useState } from "react";
 import { Tabs } from "expo-router";
 import { SCREENS } from "../../src/constants/Screens";
@@ -9,6 +9,7 @@ import {
   FloatingActionButton,
   logoMainImage,
   AddPostForm,
+  Text,
 } from "../../src/components";
 import useColorScheme from "../../src/hooks/useColorScheme";
 import { handleSubmitPost, handleTakePhoto } from "../handles";
@@ -41,6 +42,17 @@ export default function TabLayout() {
           options={{
             title: "Home",
             ...screenOptions,
+          }}
+        />
+        <Tabs.Screen
+          name={SCREENS.NOTIFICATIONS}
+          options={{
+            title: "Notifications",
+            ...screenOptions,
+            unmountOnBlur: true,
+            tabBarIcon: ({ color }: any) => (
+              <TabBarIcon name="bell" color={color} />
+            ),
           }}
         />
         <Tabs.Screen
@@ -80,6 +92,14 @@ export default function TabLayout() {
             ),
           }}
         />
+        <Tabs.Screen
+          name={SCREENS.EVENTS}
+          options={{
+            title: "Profile",
+            ...screenOptions,
+            href: null,
+          }}
+        />
       </Tabs>
       <FloatingActionButton
         showMoreAddOptions={showMoreAddOptions}
@@ -117,3 +137,11 @@ export const screenOptions = {
   ),
   headerTitle: "",
 };
+
+const styles = StyleSheet.create({
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.9)",
+    zIndex: 1,
+  },
+});

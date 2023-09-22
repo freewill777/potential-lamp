@@ -6,6 +6,7 @@ const Colors = {
   MagentaDarker: "#380a2a",
   GrayBeige: "#fff",
   BlackBlue: "#181c2c",
+  Gray: "#696969",
 } as const;
 
 export default Colors;

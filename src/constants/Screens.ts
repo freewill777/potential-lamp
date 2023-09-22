@@ -7,4 +7,6 @@ export const SCREENS = {
   AUTH: "auth",
   STORY: "story",
   REEL: "reel",
+  NOTIFICATIONS: "notifications",
+  EVENTS: "events",
 };
