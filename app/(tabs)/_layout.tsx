@@ -77,7 +77,7 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name={SCREENS.REEL}
+          name={SCREENS.REELS}
           options={{
             title: "Reels",
             header: () => <MainHeader toggleDrawer={toggleDrawer} />,
