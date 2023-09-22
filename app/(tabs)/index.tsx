@@ -7,7 +7,7 @@ import { Posts, fetchPosts } from "../../src/lib/api";
 import { supabase } from "../../src/lib/supabase";
 import PostCard from "../../src/components/PostCard";
 import { useUserInfo } from "../../src/lib/userContext";
-
+//
 export default function TabOneScreen() {
   const [posts, setPosts] = useState<Posts>([]);
   const { profile } = useUserInfo();
