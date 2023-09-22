@@ -6,5 +6,7 @@ export const SCREENS = {
   TABS: "(tabs)",
   AUTH: "auth",
   STORY: "story",
-  REELS: "reels",
+  REEL: "reel",
+  NOTIFICATIONS: "notifications",
+  EVENTS: "events",
 };

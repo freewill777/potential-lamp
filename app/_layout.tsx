@@ -1,19 +1,13 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
+import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
-import { useColorScheme } from "react-native";
 import AuthScreen from "./auth";
 import { AuthProvider, useUserInfo } from "../src/lib/userContext";
 import { SCREENS } from "../src/constants/Screens";
 import { StatusBar } from "expo-status-bar";
 import * as ImagePicker from "expo-image-picker";
-import { NavigationContainer } from "@react-navigation/native";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -24,7 +18,6 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error;
   }, [error]);
@@ -59,7 +52,6 @@ function AppStack() {
         <Stack>
           <Stack.Screen name={SCREENS.AUTH} options={{ headerShown: false }} />
           <Stack.Screen name={SCREENS.TABS} options={{ headerShown: false }} />
-          {/* @ts-ignore */}
           <Stack.Screen
             name={SCREENS.CHAT}
             //@ts-ignore

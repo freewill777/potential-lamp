@@ -12,19 +12,27 @@ import { Button, Card, SimpleButton, useThemeColor } from "./Themed";
 import * as ImagePicker from "expo-image-picker";
 import Colors from "../../enums";
 import { Video } from "expo-av";
-import { Image } from "react-native";
+
 interface Props {
   onSubmit: (content: string, image: string) => void;
   theme: "light" | "dark";
+  imageUri: string;
+  reset: Function;
 }
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-export default function AddPostForm({ onSubmit, theme }: Props) {
+export default function AddPostForm({
+  onSubmit,
+  theme,
+  imageUri,
+  reset,
+}: Props) {
   const [content, setContent] = useState("");
   const styles = createStyles();
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState(imageUri ?? "");
   const [permission, requestPermission] = ImagePicker.useCameraPermissions();
 
+  useEffect(() => setImage(imageUri), [imageUri]);
   useEffect(() => {
     if (permission?.status !== ImagePicker.PermissionStatus.GRANTED) {
       requestPermission().then(() => {
@@ -37,6 +45,7 @@ export default function AddPostForm({ onSubmit, theme }: Props) {
     onSubmit(content, image);
     setContent("");
     setImage("");
+    reset();
   };
 
   const handlePickImage = async () => {
@@ -107,7 +116,10 @@ export default function AddPostForm({ onSubmit, theme }: Props) {
               //
               danger
               title="Discard"
-              onPress={() => setImage("")}
+              onPress={() => {
+                setImage("");
+                reset();
+              }}
             />
           )}
           <SimpleButton
@@ -128,7 +140,10 @@ export default function AddPostForm({ onSubmit, theme }: Props) {
           />
           <TouchableOpacity
             style={[styles.imageButton, { position: "absolute", margin: 6 }]}
-            onPress={() => setImage("")}
+            onPress={() => {
+              setImage("");
+              reset();
+            }}
           >
             <Feather name="x" size={16} color="black" />
           </TouchableOpacity>
@@ -138,7 +153,10 @@ export default function AddPostForm({ onSubmit, theme }: Props) {
         <ImageBackground source={{ uri: image }} style={styles.image}>
           <TouchableOpacity
             style={styles.imageButton}
-            onPress={() => setImage("")}
+            onPress={() => {
+              setImage("");
+              reset();
+            }}
           >
             <Feather name="x" size={16} color="black" />
           </TouchableOpacity>

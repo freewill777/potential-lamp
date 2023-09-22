@@ -1,87 +1,157 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Feather } from "@expo/vector-icons";
-
+import {
+  Image,
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  View,
+  Dimensions,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
+import React, { useState } from "react";
 import { Tabs } from "expo-router";
-import { useColorScheme, Image } from "react-native";
-
-import { useUserInfo } from "../../src/lib/userContext";
 import { SCREENS } from "../../src/constants/Screens";
-import HeaderButtonsBar from "../../subcomponents/HeaderButtonsBar";
-import { Text } from "../../src/components/Themed";
-import { logoMainImage } from "../../src/components/AuthForm";
 import Colors from "../../enums";
-/**
- * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
- */
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>["name"];
-  color: string;
-}) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
-}
-
-function TabBarIconTV(props: {
-  name: React.ComponentProps<typeof Feather>["name"];
-  color: string;
-}) {
-  return <Feather size={28} style={{ marginBottom: -3 }} {...props} />;
-}
+import {
+  HeaderButtonsBar,
+  TabBarIcon,
+  FloatingActionButton,
+  logoMainImage,
+  AddPostForm,
+  Text,
+} from "../../src/components";
+import useColorScheme from "../../src/hooks/useColorScheme";
+import { handleSubmitPost, handleTakePhoto } from "../handles";
+import DrawerPanel from "../../src/components/DrawerPanel";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-  const { profile } = useUserInfo();
+  const [image, setImage] = useState("");
+  const [showMoreAddOptions, setShowMoreAddOptions] = useState(false);
+  const [showDrawer, setShowDrawer] = useState(false);
+
+  const theme = useColorScheme();
+
+  const toggleDrawer = () => {
+    setShowDrawer(!showDrawer);
+  };
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors.TurquoiseLight,
-        headerShadowVisible: false,
-        headerBackgroundContainerStyle: { height: 10 },
-      }}
-    >
-      <Tabs.Screen
-        name={SCREENS.HOME}
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
-          headerRight: () => <HeaderButtonsBar />,
-          headerLeft: () => (
-            <Image
-              source={logoMainImage}
-              style={{ width: 70, height: 70, marginLeft: 10 }}
-            />
-          ),
-          headerTitle: "",
+    <>
+      {!!image.length && (
+        <AddPostForm
+          theme={theme}
+          onSubmit={(content: string, image: string) =>
+            handleSubmitPost(content, image)
+          }
+          imageUri={image}
+          reset={() => setImage("")}
+        />
+      )}
+      <Tabs
+        screenOptions={{
+          tabBarActiveTintColor: Colors.TurquoiseDark,
+          headerShadowVisible: false,
+        }}
+      >
+        <Tabs.Screen
+          name={SCREENS.HOME}
+          options={{
+            title: "Home",
+            tabBarIcon: ({ color }: any) => (
+              <TabBarIcon name="home" color={color} />
+            ),
+            header: () => <MainHeader toggleDrawer={toggleDrawer} />,
+            headerTitle: "",
+          }}
+        />
+        <Tabs.Screen
+          name={SCREENS.NOTIFICATIONS}
+          options={{
+            title: "Notifications",
+            header: () => <MainHeader toggleDrawer={toggleDrawer} />,
+            headerTitle: "",
+            unmountOnBlur: true,
+            tabBarIcon: ({ color }: any) => (
+              <TabBarIcon name="bell" color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name={SCREENS.REEL}
+          options={{
+            title: "Reels",
+            header: () => <MainHeader toggleDrawer={toggleDrawer} />,
+            headerTitle: "",
+            unmountOnBlur: true,
+            tabBarIcon: ({ color }: any) => (
+              <TabBarIcon name="tv" color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name={SCREENS.MESSAGES}
+          options={{
+            title: "Messenger",
+            header: () => <MainHeader toggleDrawer={setShowDrawer} />,
+            headerTitle: "",
+            tabBarIcon: ({ color }: any) => (
+              <TabBarIcon name="wechat" color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name={SCREENS.PROFILE}
+          options={{
+            title: "Profile",
+            header: () => <MainHeader toggleDrawer={toggleDrawer} />,
+            headerTitle: "",
+            tabBarIcon: ({ color }: any) => (
+              <TabBarIcon name="user" color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name={SCREENS.EVENTS}
+          options={{
+            title: "Profile",
+            header: () => <MainHeader toggleDrawer={toggleDrawer} />,
+            headerTitle: "",
+            href: null,
+          }}
+        />
+      </Tabs>
+      {showDrawer && <DrawerPanel toggleDrawer={toggleDrawer} />}
+      <FloatingActionButton
+        showMoreAddOptions={showMoreAddOptions}
+        setShowMoreAddOptions={setShowMoreAddOptions}
+        onPress={async () => {
+          const uri = await handleTakePhoto();
+          if (uri) {
+            setImage(uri);
+            setShowMoreAddOptions(false);
+          }
         }}
       />
-      <Tabs.Screen
-        name={SCREENS.MESSAGES}
-        options={{
-          title: "Messenger",
-          headerTitle: "",
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="comment" color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name={SCREENS.PROFILE}
-        options={{
-          title: "Profile",
-          headerTitle: profile?.username || "",
-          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name={SCREENS.REELS}
-        options={{
-          title: "Reels",
-          headerTransparent: true,
-          headerTitle: "",
-          tabBarIcon: ({ color }) => <TabBarIconTV name="tv" color={color} />,
-          unmountOnBlur: true,
-        }}
-      />
-    </Tabs>
+    </>
   );
 }
+
+export const MainHeader = ({ toggleDrawer }: { toggleDrawer: Function }) => (
+  <SafeAreaView
+    style={{
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginTop: Platform.OS === "android" ? 25 : 0,
+      padding: 0,
+    }}
+  >
+    <Image
+      source={logoMainImage}
+      style={{ width: 70, height: 50, marginLeft: 10 }}
+    />
+    <HeaderButtonsBar toggleDrawer={toggleDrawer} />
+  </SafeAreaView>
+);
+
+const { width } = Dimensions.get("window");

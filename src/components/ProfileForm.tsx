@@ -95,20 +95,21 @@ export default function ProfileForm({
                 </View>
                 <Avatar uri={avatarUrl} size={120} />
               </TouchableOpacity>
-              <Text style={styles.label}>Username</Text>
+            </View>
+
+            <View>
               <TextInput
                 style={styles.textInput}
                 placeholder="Username"
                 value={username}
                 onChangeText={setUsername}
               />
-            </View>
-
-            <View style={styles.input}>
-              <SimpleButton title="Save" onPress={handleSubmit} />
-            </View>
-            <View style={styles.input}>
-              <SimpleButton title="Logout" onPress={onLogout} />
+              <View style={styles.input}>
+                <SimpleButton title="Save" onPress={handleSubmit} />
+              </View>
+              <View style={styles.input}>
+                <SimpleButton title="Logout" onPress={onLogout} />
+              </View>
             </View>
           </View>
         </TouchableWithoutFeedback>
@@ -123,6 +124,9 @@ const styles = StyleSheet.create({
   inner: {
     padding: 16,
     flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    // backgroundColor: "red",
   },
   input: {
     paddingVertical: 8,
