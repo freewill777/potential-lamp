@@ -25,7 +25,7 @@ const menuItems: MenuItem[] = [
   { name: "Profile", route: SCREENS.PROFILE, icon: "user" },
   { name: "Events", route: SCREENS.EVENTS, icon: "calendar" },
   { name: "Notifications", route: SCREENS.NOTIFICATIONS, icon: "bell" },
-  { name: "Reels", route: SCREENS.REEL, icon: "tv" },
+  { name: "Reels", route: SCREENS.REELS, icon: "tv" },
   { name: "Messenger", route: SCREENS.MESSAGES, icon: "wechat" },
 ];
 
