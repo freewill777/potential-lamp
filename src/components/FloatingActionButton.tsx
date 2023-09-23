@@ -37,7 +37,7 @@ const FloatingActionButton = ({
               onPhotoTaken={() => setShowMoreAddOptions(false)}
             />
             <FloatingActionButtonSingleRoot
-              style={{ marginVertical: height / 7 + 80, paddingRight: 7 }}
+              style={{ marginVertical: height / 7 + 80, paddingRight: 6 }}
               Icon={() => (
                 <Feather
                   name="camera"
@@ -51,7 +51,7 @@ const FloatingActionButton = ({
               onPhotoTaken={() => setShowMoreAddOptions(false)}
             />
             <FloatingActionButtonSingleRoot
-              style={{ marginVertical: height / 7 + 140, paddingRight: 7 }}
+              style={{ marginVertical: height / 7 + 140, paddingRight: 6 }}
               Icon={() => (
                 <Feather
                   name="tv"
@@ -65,7 +65,7 @@ const FloatingActionButton = ({
               onPhotoTaken={() => setShowMoreAddOptions(false)}
             />
             <FloatingActionButtonSingleRoot
-              style={{ marginVertical: height / 7 + 200, paddingRight: 7 }}
+              style={{ marginVertical: height / 7 + 200, paddingRight: 6 }}
               Icon={() => (
                 <Feather
                   name="calendar"
@@ -182,5 +182,5 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: "rgba(255, 255, 255, 0.6)",
   },
-  icon: { width: 17, height: 17 },
+  icon: { width: 18, height: 18 },
 });
