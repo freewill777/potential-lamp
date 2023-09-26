@@ -24,8 +24,26 @@ import useColorScheme from "../../src/hooks/useColorScheme";
 import { handleSubmitPost, handleTakePhoto } from "../handles";
 import DrawerPanel from "../../src/components/DrawerPanel";
 
+enum MediaFileType {
+  IMAGE = "Image",
+  VIDEO = "Video",
+}
+
+enum ItemType {
+  POST = "Post",
+  REEL = "Reel",
+  EVENT = "Event",
+}
+
+type TMediaFileType = MediaFileType;
+type TItemType = ItemType;
+
 export default function TabLayout() {
-  const [image, setImage] = useState("");
+  const [mediaFile, setMediaFile] = useState("");
+  const [mediaFileType, setMediaFileType] = useState<TMediaFileType | null>(
+    null
+  );
+  const [newItem, setNewItem] = useState<TItemType | null>(null);
   const [showMoreAddOptions, setShowMoreAddOptions] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
 
@@ -37,14 +55,14 @@ export default function TabLayout() {
 
   return (
     <>
-      {!!image.length && (
+      {!!mediaFile.length && (
         <AddPostForm
           theme={theme}
           onSubmit={(content: string, image: string) =>
             handleSubmitPost(content, image)
           }
-          imageUri={image}
-          reset={() => setImage("")}
+          mediaUri={mediaFile}
+          reset={() => setMediaFile("")}
         />
       )}
       <Tabs
@@ -127,7 +145,7 @@ export default function TabLayout() {
         onPress={async () => {
           const uri = await handleTakePhoto();
           if (uri) {
-            setImage(uri);
+            setMediaFile(uri);
             setShowMoreAddOptions(false);
           }
         }}

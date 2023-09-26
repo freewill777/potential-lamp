@@ -6,10 +6,11 @@ import {
   Image,
   TouchableOpacity,
   ActivityIndicator,
+  FlatList,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
-import { Video, ResizeMode } from "expo-av";
+import { Video, ResizeMode, AVPlaybackStatus } from "expo-av";
 import { useEffect, useRef, useState } from "react";
 import { SwiperFlatList } from "react-native-swiper-flatlist";
 import { Reels, fetchReels, Reel } from "../../src/lib/api";
@@ -20,17 +21,17 @@ const { width, height } = Dimensions.get("window");
 export default function ReelsScreen() {
   const [reels, setReels] = useState<Reels>([]);
   const [modalOpen, setModalOpen] = useState(false);
-  const video = useRef(null);
+  const videoRef = useRef<Video>(null);
   const [currindex, SetCurrindex] = useState(0);
-  const flatListRef = useRef(null);
+  const flatListRef = useRef<FlatList>(null);
 
   useEffect(() => {
     fetchReels().then((data) => setReels(data));
   }, []);
 
   useEffect(() => {
-    if (!video.current) {
-      video.current?.seek(0);
+    if (!videoRef.current) {
+      videoRef.current?.seek(0);
     }
   }, [currindex]);
 
@@ -40,17 +41,17 @@ export default function ReelsScreen() {
     }
   }, [currindex]);
 
-  const onPlaybackStatusUpdate = (playbackStatus) => {
-    if (playbackStatus.didJustFinish) {
+  const onPlaybackStatusUpdate = (playbackStatus: AVPlaybackStatus) => {
+    if (playbackStatus.isLoaded && playbackStatus.didJustFinish) {
       SetCurrindex(currindex + 1);
     }
   };
 
   const renderItem = ({ item, index }: { item: Reel; index: number }) => {
     return (
-      <View style={{ flex: 1, height: height }}>
+      <View style={{ flex: 1, height: height - 20 }}>
         <Video
-          ref={video}
+          ref={videoRef}
           style={styles.video}
           source={{
             uri: item.video,
@@ -153,7 +154,7 @@ export default function ReelsScreen() {
     );
   };
 
-  const onChangeIndex = ({ index }) => {
+  const onChangeIndex = ({ index }: { index: number }) => {
     SetCurrindex(index);
   };
 

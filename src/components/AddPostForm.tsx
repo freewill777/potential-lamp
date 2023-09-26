@@ -16,23 +16,23 @@ import { Video } from "expo-av";
 interface Props {
   onSubmit: (content: string, image: string) => void;
   theme: "light" | "dark";
-  imageUri: string;
+  mediaUri: string;
   reset: Function;
 }
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function AddPostForm({
   onSubmit,
   theme,
-  imageUri,
+  mediaUri,
   reset,
 }: Props) {
   const [content, setContent] = useState("");
   const styles = createStyles();
-  const [image, setImage] = useState(imageUri ?? "");
+  const [media, setMedia] = useState(mediaUri ?? "");
   const [permission, requestPermission] = ImagePicker.useCameraPermissions();
 
-  useEffect(() => setImage(imageUri), [imageUri]);
+  useEffect(() => setMedia(mediaUri), [mediaUri]);
   useEffect(() => {
     if (permission?.status !== ImagePicker.PermissionStatus.GRANTED) {
       requestPermission().then(() => {
@@ -42,9 +42,9 @@ export default function AddPostForm({
   }, []);
 
   const handleSubmit = () => {
-    onSubmit(content, image);
+    onSubmit(content, media);
     setContent("");
-    setImage("");
+    setMedia("");
     reset();
   };
 
@@ -53,7 +53,7 @@ export default function AddPostForm({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
     });
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setMedia(result.assets[0].uri);
     }
   };
 
@@ -63,7 +63,7 @@ export default function AddPostForm({
       allowsEditing: true,
     });
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setMedia(result.assets[0].uri);
     }
   };
 
@@ -84,7 +84,7 @@ export default function AddPostForm({
           <TouchableOpacity onPress={handleTakePhoto}>
             <Feather name="camera" size={24} color={Colors.BlackBlue} />
           </TouchableOpacity>
-          <Pressable onPress={() => { }}>
+          <Pressable onPress={() => {}}>
             {({ pressed }) => (
               <MaterialIcons
                 name="addchart"
@@ -97,27 +97,29 @@ export default function AddPostForm({
               />
             )}
           </Pressable>
-          <Pressable onPress={() => { }}>
+          <Pressable onPress={() => {}}>
             {({ pressed }) => (
-              <MaterialCommunityIcons name="movie-plus-outline" size={24}
+              <MaterialCommunityIcons
+                name="movie-plus-outline"
+                size={24}
                 color={Colors.BlackBlue}
                 style={{
                   marginRight: 15,
                   marginTop: 1,
                   opacity: pressed ? 0.5 : 1,
-                }} />
-
+                }}
+              />
             )}
           </Pressable>
         </View>
         <View style={{ flexDirection: "row", columnGap: 3 }}>
-          {image && (
+          {media && (
             <SimpleButton
               //
               danger
               title="Discard"
               onPress={() => {
-                setImage("");
+                setMedia("");
                 reset();
               }}
             />
@@ -131,17 +133,17 @@ export default function AddPostForm({
         </View>
       </Card>
 
-      {image && image?.includes(".mov") && (
+      {media && media?.includes(".mov") && (
         <View style={{ position: "relative" }}>
           <Video
-            source={{ uri: image }}
+            source={{ uri: media }}
             style={styles.image}
             useNativeControls
           />
           <TouchableOpacity
             style={[styles.imageButton, { position: "absolute", margin: 6 }]}
             onPress={() => {
-              setImage("");
+              setMedia("");
               reset();
             }}
           >
@@ -149,12 +151,12 @@ export default function AddPostForm({
           </TouchableOpacity>
         </View>
       )}
-      {image && !image?.includes(".mov") && (
-        <ImageBackground source={{ uri: image }} style={styles.image}>
+      {media && !media?.includes(".mov") && (
+        <ImageBackground source={{ uri: media }} style={styles.image}>
           <TouchableOpacity
             style={styles.imageButton}
             onPress={() => {
-              setImage("");
+              setMedia("");
               reset();
             }}
           >
