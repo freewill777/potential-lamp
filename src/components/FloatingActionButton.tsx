@@ -4,15 +4,20 @@ import Colors from "../../enums";
 import { useState } from "react";
 import { Text } from "./Themed";
 const { height } = Dimensions.get("window");
+import { ItemType, TItemType } from "../../app/(tabs)/_layout";
 
 const FloatingActionButton = ({
   onPress,
   showMoreAddOptions,
   setShowMoreAddOptions,
+  setNewItemType,
+  newItemType,
 }: {
   onPress: Function;
   showMoreAddOptions: boolean;
   setShowMoreAddOptions: Function;
+  setNewItemType: Function;
+  newItemType: TItemType | null;
 }) => {
   return (
     <>
@@ -47,7 +52,10 @@ const FloatingActionButton = ({
                 />
               )}
               text="Create new post"
-              onPress={onPress}
+              onPress={() => {
+                onPress();
+                setNewItemType(ItemType.POST);
+              }}
               onPhotoTaken={() => setShowMoreAddOptions(false)}
             />
             <FloatingActionButtonSingleRoot
@@ -61,7 +69,10 @@ const FloatingActionButton = ({
                 />
               )}
               text="Create new reel"
-              onPress={onPress}
+              onPress={() => {
+                onPress();
+                setNewItemType(ItemType.REEL);
+              }}
               onPhotoTaken={() => setShowMoreAddOptions(false)}
             />
             <FloatingActionButtonSingleRoot
@@ -75,7 +86,10 @@ const FloatingActionButton = ({
                 />
               )}
               text="Create new event"
-              onPress={onPress}
+              onPress={() => {
+                onPress();
+                setNewItemType(ItemType.EVENT);
+              }}
               onPhotoTaken={() => setShowMoreAddOptions(false)}
             />
           </View>

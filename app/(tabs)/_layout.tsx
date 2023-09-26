@@ -24,26 +24,26 @@ import useColorScheme from "../../src/hooks/useColorScheme";
 import { handleSubmitPost, handleTakePhoto } from "../handles";
 import DrawerPanel from "../../src/components/DrawerPanel";
 
-enum MediaFileType {
+export enum MediaFileType {
   IMAGE = "Image",
   VIDEO = "Video",
 }
 
-enum ItemType {
+export enum ItemType {
   POST = "Post",
   REEL = "Reel",
   EVENT = "Event",
 }
 
-type TMediaFileType = MediaFileType;
-type TItemType = ItemType;
+export type TMediaFileType = MediaFileType;
+export type TItemType = ItemType;
 
 export default function TabLayout() {
   const [mediaFile, setMediaFile] = useState("");
   const [mediaFileType, setMediaFileType] = useState<TMediaFileType | null>(
     null
   );
-  const [newItem, setNewItem] = useState<TItemType | null>(null);
+  const [newItemType, setNewItemType] = useState<TItemType | null>(null);
   const [showMoreAddOptions, setShowMoreAddOptions] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
 
@@ -62,7 +62,12 @@ export default function TabLayout() {
             handleSubmitPost(content, image)
           }
           mediaUri={mediaFile}
-          reset={() => setMediaFile("")}
+          reset={() => {
+            setMediaFile("");
+            setNewItemType(null);
+            setMediaFileType(null);
+          }}
+          newItemType={newItemType!}
         />
       )}
       <Tabs
@@ -149,6 +154,8 @@ export default function TabLayout() {
             setShowMoreAddOptions(false);
           }
         }}
+        setNewItemType={setNewItemType}
+        newItemType={newItemType!}
       />
     </>
   );

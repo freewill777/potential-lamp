@@ -12,18 +12,20 @@ import { Button, Card, SimpleButton, useThemeColor } from "./Themed";
 import * as ImagePicker from "expo-image-picker";
 import Colors from "../../enums";
 import { Video } from "expo-av";
+import { TItemType } from "../../app/(tabs)/_layout";
 
 interface Props {
   onSubmit: (content: string, image: string) => void;
   theme: "light" | "dark";
   mediaUri: string;
   reset: Function;
+  newItemType: TItemType;
 }
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function AddPostForm({
   onSubmit,
-  theme,
+  newItemType,
   mediaUri,
   reset,
 }: Props) {
@@ -77,7 +79,7 @@ export default function AddPostForm({
         style={styles.textInput}
       />
       <Card style={[styles.row, { backgroundColor: undefined }]}>
-        <View style={{ flexDirection: "row", columnGap: 20 }}>
+        {/* <View style={{ flexDirection: "row", columnGap: 20 }}>
           <TouchableOpacity onPress={handlePickImage}>
             <Feather name="image" size={24} color={Colors.BlackBlue} />
           </TouchableOpacity>
@@ -111,7 +113,7 @@ export default function AddPostForm({
               />
             )}
           </Pressable>
-        </View>
+        </View> */}
         <View style={{ flexDirection: "row", columnGap: 3 }}>
           {media && (
             <SimpleButton
@@ -127,7 +129,7 @@ export default function AddPostForm({
           <SimpleButton
             //
             inverted
-            title="Publish"
+            title={`Publish ${newItemType}`}
             onPress={handleSubmit}
           />
         </View>

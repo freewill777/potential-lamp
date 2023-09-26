@@ -50,17 +50,19 @@ export default function ReelsScreen() {
   const renderItem = ({ item, index }: { item: Reel; index: number }) => {
     return (
       <View style={{ flex: 1, height: height - 20 }}>
-        <Video
-          ref={videoRef}
-          style={styles.video}
-          source={{
-            uri: item.video,
-          }}
-          resizeMode={ResizeMode.COVER}
-          isLooping
-          shouldPlay={currindex === index}
-          onPlaybackStatusUpdate={onPlaybackStatusUpdate}
-        />
+        {item.video && (
+          <Video
+            ref={videoRef}
+            style={styles.video}
+            source={{
+              uri: item.video,
+            }}
+            resizeMode={ResizeMode.COVER}
+            isLooping
+            shouldPlay={currindex === index}
+            onPlaybackStatusUpdate={onPlaybackStatusUpdate}
+          />
+        )}
 
         <View style={styles.bottomView}>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
