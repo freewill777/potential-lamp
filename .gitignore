@@ -19,3 +19,4 @@ web-build/
 
 # Builds folder
 builds/
+.vercel

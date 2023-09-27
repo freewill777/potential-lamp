@@ -52,7 +52,7 @@ export const fetchPosts = async () => {
 export const fetchReels = async () => {
   const { data, error } = await supabase
     .from("reels")
-    .select("*")
+    .select("*, profile: profiles(username, avatar_url)")
     .order("created_at", { ascending: false });
 
   if (error) {

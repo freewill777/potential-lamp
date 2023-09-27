@@ -1,13 +1,4 @@
-import {
-  Image,
-  Platform,
-  SafeAreaView,
-  StyleSheet,
-  View,
-  Dimensions,
-  FlatList,
-  TouchableOpacity,
-} from "react-native";
+import { Image, Platform, SafeAreaView, Dimensions } from "react-native";
 import React, { useState } from "react";
 import { Tabs } from "expo-router";
 import { SCREENS } from "../../src/constants/Screens";
@@ -21,11 +12,35 @@ import {
   Text,
 } from "../../src/components";
 import useColorScheme from "../../src/hooks/useColorScheme";
-import { handleSubmitPost, handleTakePhoto } from "../handles";
+import {
+  handleSubmitPost,
+  handleTakePhoto,
+  handleSubmitReel,
+  handleTakeVideo,
+  handleTakePhotoVideo,
+} from "../handles";
 import DrawerPanel from "../../src/components/DrawerPanel";
 
+export enum MediaFileType {
+  IMAGE = "Image",
+  VIDEO = "Video",
+}
+
+export enum ItemType {
+  POST = "Post",
+  REEL = "Reel",
+  EVENT = "Event",
+}
+
+export type TMediaFileType = MediaFileType;
+export type TItemType = ItemType;
+
 export default function TabLayout() {
-  const [image, setImage] = useState("");
+  const [mediaFile, setMediaFile] = useState("");
+  const [mediaFileType, setMediaFileType] = useState<TMediaFileType | null>(
+    null
+  );
+  const [newItemType, setNewItemType] = useState<TItemType | null>(null);
   const [showMoreAddOptions, setShowMoreAddOptions] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
 
@@ -37,14 +52,24 @@ export default function TabLayout() {
 
   return (
     <>
-      {!!image.length && (
+      {!!mediaFile.length && (
         <AddPostForm
           theme={theme}
-          onSubmit={(content: string, image: string) =>
-            handleSubmitPost(content, image)
-          }
-          imageUri={image}
-          reset={() => setImage("")}
+          onSubmit={(content: string, image: string) => {
+            if (newItemType === ItemType.POST) {
+              handleSubmitPost(content, image);
+            }
+            if (newItemType === ItemType.REEL) {
+              handleSubmitReel(content, image);
+            }
+          }}
+          mediaUri={mediaFile}
+          reset={() => {
+            setMediaFile("");
+            setNewItemType(null);
+            setMediaFileType(null);
+          }}
+          newItemType={newItemType!}
         />
       )}
       <Tabs
@@ -124,13 +149,24 @@ export default function TabLayout() {
       <FloatingActionButton
         showMoreAddOptions={showMoreAddOptions}
         setShowMoreAddOptions={setShowMoreAddOptions}
-        onPress={async () => {
-          const uri = await handleTakePhoto();
-          if (uri) {
-            setImage(uri);
-            setShowMoreAddOptions(false);
+        onPress={async (type: string) => {
+          if (type === ItemType.POST) {
+            const uri = await handleTakePhotoVideo();
+            if (uri) {
+              setMediaFile(uri);
+              setShowMoreAddOptions(false);
+            }
+          }
+          if (type === ItemType.REEL) {
+            const uri = await handleTakeVideo();
+            if (uri) {
+              setMediaFile(uri);
+              setShowMoreAddOptions(false);
+            }
           }
         }}
+        setNewItemType={setNewItemType}
+        newItemType={newItemType}
       />
     </>
   );

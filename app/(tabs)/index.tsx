@@ -13,7 +13,7 @@ export default function TabOneScreen() {
   const { profile } = useUserInfo();
 
   useEffect(() => {
-    fetchPosts().then((data) => setPosts(data));
+    fetchPosts().then(setPosts);
   }, [profile]);
 
   const handleDeletePost = async (id: string) => {

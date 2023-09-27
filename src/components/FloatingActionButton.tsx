@@ -5,14 +5,30 @@ import { useState } from "react";
 import { Text } from "./Themed";
 const { height } = Dimensions.get("window");
 
+export enum MediaFileType {
+  IMAGE = "Image",
+  VIDEO = "Video",
+}
+
+export enum ItemType {
+  POST = "Post",
+  REEL = "Reel",
+  EVENT = "Event",
+}
+
+export type TMediaFileType = MediaFileType;
+export type TItemType = ItemType;
+
 const FloatingActionButton = ({
   onPress,
   showMoreAddOptions,
   setShowMoreAddOptions,
+  setNewItemType,
 }: {
   onPress: Function;
   showMoreAddOptions: boolean;
   setShowMoreAddOptions: Function;
+  setNewItemType: Function;
 }) => {
   return (
     <>
@@ -47,7 +63,10 @@ const FloatingActionButton = ({
                 />
               )}
               text="Create new post"
-              onPress={onPress}
+              onPress={async () => {
+                setNewItemType();
+                await onPress(ItemType.POST);
+              }}
               onPhotoTaken={() => setShowMoreAddOptions(false)}
             />
             <FloatingActionButtonSingleRoot
@@ -61,7 +80,10 @@ const FloatingActionButton = ({
                 />
               )}
               text="Create new reel"
-              onPress={onPress}
+              onPress={async () => {
+                setNewItemType(ItemType.REEL);
+                await onPress(ItemType.REEL);
+              }}
               onPhotoTaken={() => setShowMoreAddOptions(false)}
             />
             <FloatingActionButtonSingleRoot
@@ -75,7 +97,10 @@ const FloatingActionButton = ({
                 />
               )}
               text="Create new event"
-              onPress={onPress}
+              onPress={async () => {
+                setNewItemType(ItemType.EVENT);
+                await onPress(ItemType.EVENT);
+              }}
               onPhotoTaken={() => setShowMoreAddOptions(false)}
             />
           </View>
