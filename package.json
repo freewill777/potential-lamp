@@ -7,7 +7,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
-    "gen:types": "npx supabase gen types typescript --project-id [ID-first-part-of-supabase-url] > ./src/db_types.ts"
+    "gen:types": "npx supabase gen types typescript --project-id znubrljvuaprjaubblwi > ./src/db_types.ts"
   },
   "jest": {
     "preset": "jest-expo"

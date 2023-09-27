@@ -1,13 +1,4 @@
-import {
-  Image,
-  Platform,
-  SafeAreaView,
-  StyleSheet,
-  View,
-  Dimensions,
-  FlatList,
-  TouchableOpacity,
-} from "react-native";
+import { Image, Platform, SafeAreaView, Dimensions } from "react-native";
 import React, { useState } from "react";
 import { Tabs } from "expo-router";
 import { SCREENS } from "../../src/constants/Screens";
@@ -21,7 +12,13 @@ import {
   Text,
 } from "../../src/components";
 import useColorScheme from "../../src/hooks/useColorScheme";
-import { handleSubmitPost, handleTakePhoto } from "../handles";
+import {
+  handleSubmitPost,
+  handleTakePhoto,
+  handleSubmitReel,
+  handleTakeVideo,
+  handleTakePhotoVideo,
+} from "../handles";
 import DrawerPanel from "../../src/components/DrawerPanel";
 
 export enum MediaFileType {
@@ -58,9 +55,14 @@ export default function TabLayout() {
       {!!mediaFile.length && (
         <AddPostForm
           theme={theme}
-          onSubmit={(content: string, image: string) =>
-            handleSubmitPost(content, image)
-          }
+          onSubmit={(content: string, image: string) => {
+            if (newItemType === ItemType.POST) {
+              handleSubmitPost(content, image);
+            }
+            if (newItemType === ItemType.REEL) {
+              handleSubmitReel(content, image);
+            }
+          }}
           mediaUri={mediaFile}
           reset={() => {
             setMediaFile("");
@@ -147,15 +149,24 @@ export default function TabLayout() {
       <FloatingActionButton
         showMoreAddOptions={showMoreAddOptions}
         setShowMoreAddOptions={setShowMoreAddOptions}
-        onPress={async () => {
-          const uri = await handleTakePhoto();
-          if (uri) {
-            setMediaFile(uri);
-            setShowMoreAddOptions(false);
+        onPress={async (type: string) => {
+          if (type === ItemType.POST) {
+            const uri = await handleTakePhotoVideo();
+            if (uri) {
+              setMediaFile(uri);
+              setShowMoreAddOptions(false);
+            }
+          }
+          if (type === ItemType.REEL) {
+            const uri = await handleTakeVideo();
+            if (uri) {
+              setMediaFile(uri);
+              setShowMoreAddOptions(false);
+            }
           }
         }}
         setNewItemType={setNewItemType}
-        newItemType={newItemType!}
+        newItemType={newItemType}
       />
     </>
   );

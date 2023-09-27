@@ -7,14 +7,26 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   FlatList,
+  Alert,
+  Button,
+  Pressable,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import { Video, ResizeMode, AVPlaybackStatus } from "expo-av";
 import { useEffect, useRef, useState } from "react";
 import { SwiperFlatList } from "react-native-swiper-flatlist";
-import { Reels, fetchReels, Reel } from "../../src/lib/api";
+import {
+  Reels,
+  fetchReels,
+  Reel,
+  Profile,
+  downloadAvatar,
+} from "../../src/lib/api";
 import Colors from "../../enums";
+import { Avatar } from "../../src/components";
+import { supabase } from "../../src/lib/supabase";
+import { useUserInfo } from "../../src/lib/userContext";
 
 const { width, height } = Dimensions.get("window");
 
@@ -29,25 +41,61 @@ export default function ReelsScreen() {
     fetchReels().then((data) => setReels(data));
   }, []);
 
-  useEffect(() => {
-    if (!videoRef.current) {
-      videoRef.current?.seek(0);
-    }
-  }, [currindex]);
+  // useEffect(() => {
+  //   if (!videoRef.current) {
+  //     videoRef.current?.seek(0);
+  //   }
+  // }, [currindex]);
 
-  useEffect(() => {
-    if (flatListRef.current && currindex < reels.length) {
-      flatListRef.current.scrollToIndex({ index: currindex, animated: true });
-    }
-  }, [currindex]);
+  // useEffect(() => {
+  //   if (flatListRef.current && currindex < reels.length) {
+  //     flatListRef.current.scrollToIndex({ index: currindex, animated: true });
+  //   }
+  // }, [currindex]);
 
-  const onPlaybackStatusUpdate = (playbackStatus: AVPlaybackStatus) => {
-    if (playbackStatus.isLoaded && playbackStatus.didJustFinish) {
-      SetCurrindex(currindex + 1);
+  const handleDeleteReel = async (id: string) => {
+    const { error } = await supabase.from("reels").delete().eq("id", id);
+    if (error) {
+      Alert.alert(error.message);
+      console.log(error);
+    } else {
+      setReels(reels.filter((reel) => reel.id !== id));
     }
   };
 
-  const renderItem = ({ item, index }: { item: Reel; index: number }) => {
+  const onPlaybackStatusUpdate = (playbackStatus: AVPlaybackStatus) => {
+    if (playbackStatus.isLoaded && playbackStatus.didJustFinish) {
+      if (flatListRef.current && currindex + 1 < reels.length) {
+        flatListRef.current.scrollToIndex({
+          index: currindex + 1,
+          animated: true,
+        });
+      }
+      SetCurrindex((currindex) => currindex + 1);
+    }
+  };
+
+  const RenderItem = ({
+    item,
+    index,
+    currindex,
+    onPlaybackStatusUpdate,
+  }: {
+    item: Reel;
+    index: number;
+    currindex: number;
+    onPlaybackStatusUpdate: (status: AVPlaybackStatus) => void;
+  }) => {
+    const profile = item.profile as Profile;
+    const [avatarUrl, setAvatarUrl] = useState("");
+    const user = useUserInfo();
+
+    useEffect(() => {
+      if (profile?.avatar_url) {
+        downloadAvatar(profile.avatar_url).then(setAvatarUrl);
+      }
+    }, [profile]);
+
     return (
       <View style={{ flex: 1, height: height - 20 }}>
         {item.video && (
@@ -63,39 +111,37 @@ export default function ReelsScreen() {
             onPlaybackStatusUpdate={onPlaybackStatusUpdate}
           />
         )}
-
+        {user?.profile?.id === item.user_id && (
+          <View
+            style={{
+              paddingVertical: 50,
+              flexDirection: "row",
+              justifyContent: "flex-end",
+            }}
+          >
+            <View style={styles.buttonInnerContainer}>
+              <Button
+                title="Delete Reel"
+                onPress={() => handleDeleteReel(item.id)}
+                color={Colors.BlackBlue}
+              ></Button>
+            </View>
+          </View>
+        )}
         <View style={styles.bottomView}>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Image
-              source={{
-                uri: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-              }}
-              style={styles.profile}
-            />
-            <Text
-              style={{ marginHorizontal: 8, color: "#fff", fontWeight: "bold" }}
-            >
-              Sahil Alagiya
+            <Avatar uri={avatarUrl} />
+            <Text style={{ color: "#fff", fontWeight: "bold", marginLeft: 5 }}>
+              {item.profile?.username}
             </Text>
-            <TouchableOpacity
-              style={{
-                borderColor: Colors.White,
-                borderWidth: 1,
-                paddingHorizontal: 10,
-                paddingVertical: 1,
-                borderRadius: 3,
-              }}
-            >
-              <Text style={{ color: "#fff" }}>Follow</Text>
-            </TouchableOpacity>
           </View>
           <View>
             <View style={{ flexDirection: "row", marginTop: 8 }}>
-              <Text numberOfLines={1} style={{ flex: 1, color: "#fff" }}>
-                {item.description}Description
+              <Text numberOfLines={1} style={{ flex: 1, color: "transparent" }}>
+                {item.description}
+                {""}
               </Text>
             </View>
-
             <View style={{ ...styles.flexHorizontal, marginBottom: 8 }}>
               <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <View
@@ -103,52 +149,8 @@ export default function ReelsScreen() {
                     flexDirection: "row",
                     alignItems: "center",
                   }}
-                >
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <Feather name="heart" size={20} color="#fff" />
-                    <Text
-                      style={{
-                        marginLeft: 4,
-                        fontSize: 15,
-                        color: Colors.White,
-                      }}
-                    >
-                      94.6K
-                    </Text>
-                  </View>
-
-                  {/* <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      marginLeft: 10,
-                    }}
-                  >
-                    <Feather name="filter" size={20} color="#fff" />
-                    <Text
-                      style={{
-                        marginLeft: 4,
-                        fontSize: 15,
-                        color: Colors.White,
-                      }}
-                    >
-                      112
-                    </Text>
-                  </View> */}
-                </View>
+                ></View>
               </View>
-
-              {/* <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Feather name="heart" size={15} color="#fff" />
-                  <Text style={{ marginLeft: 4 }}>94.6K</Text>
-                </View>
-
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Feather name="filter" size={15} color="#fff" />
-                  <Text style={{ marginLeft: 4 }}>112</Text>
-                </View>
-              </View> */}
             </View>
           </View>
         </View>
@@ -182,7 +184,14 @@ export default function ReelsScreen() {
       <SwiperFlatList
         ref={flatListRef}
         vertical={true}
-        renderItem={renderItem}
+        renderItem={({ item, index }) => (
+          <RenderItem
+            item={item}
+            index={index}
+            currindex={currindex}
+            onPlaybackStatusUpdate={onPlaybackStatusUpdate}
+          />
+        )}
         data={reels}
         keyExtractor={(item, index) => index.toString()}
         onChangeIndex={onChangeIndex}
@@ -193,13 +202,6 @@ export default function ReelsScreen() {
         snapToAlignment="center"
         snapToInterval={height}
       />
-
-      {/* <View style={{ position: "absolute", top: 40, left: 16 }}>
-        <Text style={styles.textStyle}>Reels</Text>
-      </View> */}
-      {/* <View style={{ position: "absolute", top: 40, right: 16 }}>
-        <Feather name="camera" size={30} color="#fff" />
-      </View> */}
     </View>
   );
 
@@ -241,6 +243,20 @@ const styles = StyleSheet.create({
     height: 35,
     width: 35,
     borderRadius: 30,
+  },
+  deleteReelButton: {
+    position: "absolute",
+    right: 20,
+    top: 60,
+    backgroundColor: Colors.White,
+    borderRadius: 5,
+    padding: 10,
+  },
+  buttonInnerContainer: {
+    backgroundColor: Colors.White,
+    width: "40%",
+    borderRadius: 5,
+    marginRight: 10,
   },
 });
 

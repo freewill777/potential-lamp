@@ -48,19 +48,19 @@ export interface Database {
       }
       post_likes: {
         Row: {
-          created_at: string | null
+          created_at: string
           id: number
           post_id: string
           user_id: string
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           id?: number
           post_id: string
           user_id: string
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           id?: number
           post_id?: string
           user_id?: string
@@ -83,24 +83,24 @@ export interface Database {
       posts: {
         Row: {
           content: string
-          created_at: string | null
+          created_at: string
           id: string
           image: string | null
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           content: string
-          created_at?: string | null
+          created_at?: string
           id?: string
           image?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Update: {
           content?: string
-          created_at?: string | null
+          created_at?: string
           id?: string
           image?: string | null
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {
@@ -144,6 +144,61 @@ export interface Database {
             referencedColumns: ["id"]
           }
         ]
+      }
+      reels: {
+        Row: {
+          content: string | null
+          created_at: string
+          id: string
+          user_id: string
+          video: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          user_id?: string
+          video?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          id?: string
+          user_id?: string
+          video?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reels_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      Tasks: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: number
+          owner: string | null
+          title: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: number
+          owner?: string | null
+          title?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: number
+          owner?: string | null
+          title?: string | null
+        }
+        Relationships: []
       }
     }
     Views: {

@@ -4,20 +4,31 @@ import Colors from "../../enums";
 import { useState } from "react";
 import { Text } from "./Themed";
 const { height } = Dimensions.get("window");
-import { ItemType, TItemType } from "../../app/(tabs)/_layout";
+
+export enum MediaFileType {
+  IMAGE = "Image",
+  VIDEO = "Video",
+}
+
+export enum ItemType {
+  POST = "Post",
+  REEL = "Reel",
+  EVENT = "Event",
+}
+
+export type TMediaFileType = MediaFileType;
+export type TItemType = ItemType;
 
 const FloatingActionButton = ({
   onPress,
   showMoreAddOptions,
   setShowMoreAddOptions,
   setNewItemType,
-  newItemType,
 }: {
   onPress: Function;
   showMoreAddOptions: boolean;
   setShowMoreAddOptions: Function;
   setNewItemType: Function;
-  newItemType: TItemType | null;
 }) => {
   return (
     <>
@@ -52,9 +63,9 @@ const FloatingActionButton = ({
                 />
               )}
               text="Create new post"
-              onPress={() => {
-                onPress();
-                setNewItemType(ItemType.POST);
+              onPress={async () => {
+                setNewItemType();
+                await onPress(ItemType.POST);
               }}
               onPhotoTaken={() => setShowMoreAddOptions(false)}
             />
@@ -69,9 +80,9 @@ const FloatingActionButton = ({
                 />
               )}
               text="Create new reel"
-              onPress={() => {
-                onPress();
+              onPress={async () => {
                 setNewItemType(ItemType.REEL);
+                await onPress(ItemType.REEL);
               }}
               onPhotoTaken={() => setShowMoreAddOptions(false)}
             />
@@ -86,9 +97,9 @@ const FloatingActionButton = ({
                 />
               )}
               text="Create new event"
-              onPress={() => {
-                onPress();
+              onPress={async () => {
                 setNewItemType(ItemType.EVENT);
+                await onPress(ItemType.EVENT);
               }}
               onPhotoTaken={() => setShowMoreAddOptions(false)}
             />
