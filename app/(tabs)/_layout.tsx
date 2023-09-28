@@ -138,7 +138,16 @@ export default function TabLayout() {
         <Tabs.Screen
           name={SCREENS.EVENTS}
           options={{
-            title: "Profile",
+            title: "Events",
+            header: () => <MainHeader toggleDrawer={toggleDrawer} />,
+            headerTitle: "",
+            href: null,
+          }}
+        />
+        <Tabs.Screen
+          name={SCREENS.NEWEVENT}
+          options={{
+            title: "Submit New Event",
             header: () => <MainHeader toggleDrawer={toggleDrawer} />,
             headerTitle: "",
             href: null,

@@ -4,6 +4,8 @@ import Colors from "../../enums";
 import { useState } from "react";
 import { Text } from "./Themed";
 const { height } = Dimensions.get("window");
+import { useNavigation } from "expo-router";
+import { SCREENS } from "../constants/Screens";
 
 export enum MediaFileType {
   IMAGE = "Image",
@@ -30,6 +32,8 @@ const FloatingActionButton = ({
   setShowMoreAddOptions: Function;
   setNewItemType: Function;
 }) => {
+  const navigation = useNavigation();
+
   return (
     <>
       {!showMoreAddOptions && (
@@ -98,8 +102,9 @@ const FloatingActionButton = ({
               )}
               text="Create new event"
               onPress={async () => {
-                setNewItemType(ItemType.EVENT);
-                await onPress(ItemType.EVENT);
+                //@ts-ignore
+                navigation.navigate(SCREENS.NEWEVENT);
+                setShowMoreAddOptions(false);
               }}
               onPhotoTaken={() => setShowMoreAddOptions(false)}
             />

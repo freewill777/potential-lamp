@@ -1,35 +1,33 @@
 import { FlatList, View, Image, StyleSheet, SafeAreaView } from "react-native";
 import { Text } from "../../src/components";
 import Colors from "../../enums";
+import { useEffect, useState } from "react";
+import { Events, fetchEvents } from "../../src/lib/api";
 
-type Event = {
+type TEvent = {
   id: string;
-  title: string;
+  name: string;
   description: string;
   date: string;
   location: string;
   image: string;
+  media: string;
 };
-const random = Math.random();
-
-const defaultEvents: Event[] = Array(10).fill({
-  id: String(random),
-  title: "Snowboard Tournament",
-  description: "Come and join us for a day of snowboarding!",
-  date: "12/12/2023",
-  location: "Lech, Austria",
-  image: "https://picsum.photos/200/300",
-});
 
 const EventsScreen = () => {
-  const events: Event[] = [...defaultEvents];
-  const renderItem = ({ item }: { item: Event }) => (
+  const [events, setEvents] = useState<Events>([]);
+
+  useEffect(() => {
+    fetchEvents().then(setEvents);
+  }, []);
+
+  const renderItem = ({ item }: { item: TEvent }) => (
     <View style={styles.renderItem}>
-      <Text>{item.title}</Text>
+      <Text>{item.name}</Text>
       <Text>{item.description}</Text>
-      <Image source={{ uri: item.image }} style={styles.image} />
       <Text>{item.date}</Text>
       <Text>{item.location}</Text>
+      <Image source={{ uri: item.media }} style={styles.image} />
     </View>
   );
   return (
