@@ -12,6 +12,8 @@ export type Contacts = Awaited<ReturnType<typeof fetchContacts>>;
 export type Contact = Contacts[number];
 export type Messages = Awaited<ReturnType<typeof fetchMessages>>;
 export type Message = Messages[number];
+export type Events = Awaited<ReturnType<typeof fetchEvents>>;
+export type Event = Events[number];
 
 export const downloadAvatar = async (path: string): Promise<string> => {
   try {
@@ -52,6 +54,20 @@ export const fetchPosts = async () => {
 export const fetchReels = async () => {
   const { data, error } = await supabase
     .from("reels")
+    .select("*, profile: profiles(username, avatar_url)")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.log("error", error);
+    return [];
+  }
+  // console.log(data)
+  return data;
+};
+
+export const fetchEvents = async () => {
+  const { data, error } = await supabase
+    .from("events")
     .select("*, profile: profiles(username, avatar_url)")
     .order("created_at", { ascending: false });
 

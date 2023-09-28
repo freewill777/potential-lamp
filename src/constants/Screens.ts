@@ -9,4 +9,5 @@ export const SCREENS = {
   REELS: "reels",
   NOTIFICATIONS: "notifications",
   EVENTS: "events",
+  NEWEVENT: "newevent",
 };
