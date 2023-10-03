@@ -17,7 +17,7 @@ import { useNavigation } from "expo-router";
 type MenuItem = {
   name: string;
   route: string;
-  icon: string;
+  icon: keyof typeof FontAwesome.glyphMap;
 };
 
 const menuItems: MenuItem[] = [
@@ -29,7 +29,7 @@ const menuItems: MenuItem[] = [
   { name: "Messenger", route: SCREENS.MESSAGES, icon: "wechat" },
 ];
 
-const DrawerPanel = ({ toggleDrawer }: { toggleDrawer: () => void }) => {
+export const DrawerPanel = ({ toggleDrawer }: { toggleDrawer: () => void }) => {
   const navigation = useNavigation();
   const renderItem = ({ item }: { item: MenuItem }) => {
     return (
@@ -37,6 +37,7 @@ const DrawerPanel = ({ toggleDrawer }: { toggleDrawer: () => void }) => {
         style={styles.renderItem}
         onPress={() => {
           toggleDrawer();
+          //@ts-ignore
           navigation.navigate(item.route);
         }}
       >
@@ -70,8 +71,6 @@ const DrawerPanel = ({ toggleDrawer }: { toggleDrawer: () => void }) => {
     </View>
   );
 };
-
-export default DrawerPanel;
 
 const { width, height } = Dimensions.get("window");
 

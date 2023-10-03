@@ -15,3 +15,7 @@ export { default as TabBarIconTV } from "./TabBarIconTV";
 export { Text, View, Card, Button, TextInput, useThemeColor } from "./Themed";
 import { FriendSystem } from "./FriendSystem";
 export { FriendSystem };
+import { DrawerPanel } from "./DrawerPanel";
+export { DrawerPanel };
+import { MainHeader } from "./MainHader";
+export { MainHeader };
