@@ -8,7 +8,8 @@ import { useUserInfo } from "../lib/userContext";
 import Avatar from "./Avatar";
 import { supabase } from "../lib/supabase";
 import Colors from "../../enums";
-import { Likes, Post, Profile, downloadAvatar, fecthLikes } from "../lib/api";
+import { Likes, Post, Profile, downloadAvatar, fetchLikes } from "../lib/api";
+import useConsoleLog from "../../utils/useConsoleLog";
 
 export interface PostCardProps {
   post: Post;
@@ -27,13 +28,15 @@ export default function PostCard({
   const [likes, setLikes] = useState<Likes>([]);
   const navigation = useNavigation();
 
+  useConsoleLog(likes);
+
   const userLikesPost = useMemo(
     () => likes?.find((like) => like.user_id === user?.profile?.id),
     [likes, user]
   );
 
   const getLikes = useCallback(
-    () => fecthLikes(post.id).then(setLikes),
+    () => fetchLikes(post.id).then(setLikes),
     [post]
   );
 
@@ -80,12 +83,7 @@ export default function PostCard({
 
   return (
     <Card style={[styles.container, containerStyles]}>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
-      >
+      <View style={styles.innerView}>
         <View>
           <Card style={styles.header}>
             <TouchableOpacity
@@ -215,5 +213,9 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     borderRadius: 10,
+  },
+  innerView: {
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
 });

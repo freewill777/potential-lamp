@@ -1,7 +1,7 @@
 import { Database } from "../db_types";
 import { supabase } from "./supabase";
 
-export type Likes = Awaited<ReturnType<typeof fecthLikes>>;
+export type Likes = Awaited<ReturnType<typeof fetchLikes>>;
 export type Like = Likes[number];
 export type Posts = Awaited<ReturnType<typeof fetchPosts>>;
 export type Post = Posts[number];
@@ -79,7 +79,7 @@ export const fetchEvents = async () => {
   return data;
 };
 
-export const fecthLikes = async (postId: string) => {
+export const fetchLikes = async (postId: string) => {
   const { data, error } = await supabase
     .from("post_likes")
     .select("user_id, id")

@@ -23,6 +23,18 @@ const NewEventScreen = () => {
     }
   };
 
+  const onPressSubmitEvent = async () => {
+    await handleSubmitEvent(
+      eventName,
+      eventMediaUrl,
+      eventDescription,
+      eventLocation,
+      eventDate
+    );
+    //@ts-ignore
+    navigation.navigate(SCREENS.EVENTS);
+  };
+
   return (
     <View>
       <TouchableOpacity onPress={handlePickImage}>
@@ -76,20 +88,7 @@ const NewEventScreen = () => {
         />
       </View>
       <View style={[styles.input, { paddingHorizontal: 10 }]}>
-        <SimpleButton
-          title={"Submit event"}
-          onPress={async () => {
-            await handleSubmitEvent(
-              eventName,
-              eventMediaUrl,
-              eventDescription,
-              eventLocation,
-              eventDate
-            );
-            //@ts-ignore
-            navigation.navigate(SCREENS.EVENTS);
-          }}
-        />
+        <SimpleButton title={"Submit event"} onPress={onPressSubmitEvent} />
       </View>
     </View>
   );
