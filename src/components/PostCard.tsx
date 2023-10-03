@@ -55,14 +55,15 @@ export default function PostCard({
 
     if (userLikesPost) {
       const { error } = await supabase
-        .from("post_likes")
+        .from("post_interactions")
         .delete()
         .eq("id", userLikesPost.id);
       if (error) Alert.alert(error.message);
     } else {
-      const { error } = await supabase.from("post_likes").insert({
+      const { error } = await supabase.from("post_interactions").insert({
         post_id: post.id,
         user_id: user?.profile?.id,
+        interaction_type: "like",
       });
 
       if (error) Alert.alert(error.message);

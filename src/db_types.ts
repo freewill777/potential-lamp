@@ -86,34 +86,40 @@ export interface Database {
           }
         ]
       }
-      post_likes: {
+      post_interactions: {
         Row: {
+          content: string | null
           created_at: string
           id: number
+          interaction_type: string
           post_id: string
           user_id: string
         }
         Insert: {
+          content?: string | null
           created_at?: string
           id?: number
+          interaction_type: string
           post_id: string
           user_id: string
         }
         Update: {
+          content?: string | null
           created_at?: string
           id?: number
+          interaction_type?: string
           post_id?: string
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "post_likes_post_id_fkey"
+            foreignKeyName: "post_interactions_post_id_fkey"
             columns: ["post_id"]
             referencedRelation: "posts"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "post_likes_user_id_fkey"
+            foreignKeyName: "post_interactions_user_id_fkey"
             columns: ["user_id"]
             referencedRelation: "users"
             referencedColumns: ["id"]

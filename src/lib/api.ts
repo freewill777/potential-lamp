@@ -81,7 +81,7 @@ export const fetchEvents = async () => {
 
 export const fetchLikes = async (postId: string) => {
   const { data, error } = await supabase
-    .from("post_likes")
+    .from("post_interactions")
     .select("user_id, id")
     .eq("post_id", postId);
   if (error) {
