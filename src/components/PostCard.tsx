@@ -24,6 +24,13 @@ import {
 } from "../lib/api";
 import useConsoleLog from "../../utils/useConsoleLog";
 import { Ionicons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
+
+export enum InteractionType {
+  Like = "like",
+  Comment = "comment",
+  Share = "share",
+}
 
 export interface PostCardProps {
   post: Post;
@@ -81,12 +88,21 @@ export default function PostCard({
       const { error } = await supabase.from("post_interactions").insert({
         post_id: post.id,
         user_id: user?.profile?.id,
-        interaction_type: "like",
+        interaction_type: InteractionType.Like,
       });
 
       if (error) Alert.alert(error.message);
     }
 
+    getPostInteractions();
+  };
+
+  const deleteComment = async (id: string) => {
+    const { error } = await supabase
+      .from("post_interactions")
+      .delete()
+      .eq("id", id);
+    if (error) Alert.alert(error.message);
     getPostInteractions();
   };
 
@@ -108,7 +124,7 @@ export default function PostCard({
           post_id: post.id,
           user_id: user?.profile?.id,
           content: comment,
-          interaction_type: "comment",
+          interaction_type: InteractionType.Comment,
         })
         .then(() => {
           getPostInteractions();
@@ -187,30 +203,15 @@ export default function PostCard({
         </Card>
       )}
       <View style={{ flexDirection: "column", marginHorizontal: 20 }}>
-        {interactions.map((like) => {
-          return <Text>{like.content}</Text>;
-        })}
+        {interactions?.map((comment) => (
+          <SingleComment comment={comment} deleteComment={deleteComment} />
+        ))}
       </View>
-      <View
-        style={{
-          ...styles.flex,
-          justifyContent: "space-between",
-          marginHorizontal: 15,
-          marginVertical: 5,
-          backgroundColor: "#e4e7eb",
-          padding: 5,
-          borderRadius: 6,
-        }}
-      >
+      <View style={styles.commentFormContainer}>
         <TextInput
           placeholder="Add comment..."
           placeholderTextColor={"#696969"}
-          style={{
-            marginLeft: 5,
-            paddingRight: 10,
-            fontFamily: "DMSans",
-            width: 300,
-          }}
+          style={styles.addCommentInput}
           value={comment}
           onChangeText={setComment}
         />
@@ -227,6 +228,22 @@ export default function PostCard({
   );
 }
 
+const SingleComment = ({
+  comment,
+  deleteComment,
+}: {
+  comment: any;
+  deleteComment: (id: string) => void;
+}) => {
+  return (
+    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+      <Text>{comment.content}</Text>
+      <TouchableOpacity onPress={() => deleteComment(String(comment.id))}>
+        <MaterialIcons name="delete" size={24} color={Colors.TurquoiseDark} />
+      </TouchableOpacity>
+    </View>
+  );
+};
 const styles = StyleSheet.create({
   flex: { flexDirection: "row", alignItems: "center" },
   container: {
@@ -292,5 +309,21 @@ const styles = StyleSheet.create({
   innerView: {
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+  commentFormContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginHorizontal: 15,
+    marginVertical: 5,
+    backgroundColor: "#e4e7eb",
+    padding: 5,
+    borderRadius: 6,
+  },
+  addCommentInput: {
+    marginLeft: 5,
+    paddingRight: 10,
+    fontFamily: "DMSans",
+    width: 300,
   },
 });
