@@ -49,6 +49,46 @@ export interface Database {
           }
         ]
       }
+      events_interactions: {
+        Row: {
+          content: string | null
+          created_at: string
+          event_id: string
+          id: number
+          interaction_type: string
+          user_id: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          event_id: string
+          id?: number
+          interaction_type: string
+          user_id: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          event_id?: string
+          id?: number
+          interaction_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_interactions_event_id_fkey"
+            columns: ["event_id"]
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_interactions_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       messages: {
         Row: {
           content: string

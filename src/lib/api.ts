@@ -53,6 +53,19 @@ export const fetchPosts = async () => {
   return data;
 };
 
+export const fetchPostInteractions = async (postId: string) => {
+  const { data, error } = await supabase
+    .from("post_interactions")
+    .select("*, profile: profiles(username, avatar_url, id)")
+    .eq("post_id", postId);
+  if (error) {
+    console.log("error", error);
+    return [];
+  } else {
+    return data;
+  }
+};
+
 export const fetchReels = async () => {
   const { data, error } = await supabase
     .from("reels")
@@ -81,11 +94,11 @@ export const fetchEvents = async () => {
   return data;
 };
 
-export const fetchPostInteractions = async (postId: string) => {
+export const fetchEventInteractions = async (eventId: string) => {
   const { data, error } = await supabase
-    .from("post_interactions")
+    .from("event_interactions")
     .select("*, profile: profiles(username, avatar_url, id)")
-    .eq("post_id", postId);
+    .eq("event_id", eventId);
   if (error) {
     console.log("error", error);
     return [];
