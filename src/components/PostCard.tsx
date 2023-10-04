@@ -1,4 +1,11 @@
-import { Alert, Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Image,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useNavigation } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Video } from "expo-av";
@@ -8,8 +15,15 @@ import { useUserInfo } from "../lib/userContext";
 import Avatar from "./Avatar";
 import { supabase } from "../lib/supabase";
 import Colors from "../../enums";
-import { Likes, Post, Profile, downloadAvatar, fetchLikes } from "../lib/api";
+import {
+  PostInteractions,
+  Post,
+  Profile,
+  downloadAvatar,
+  fetchPostInteractions,
+} from "../lib/api";
 import useConsoleLog from "../../utils/useConsoleLog";
+import { Ionicons } from "@expo/vector-icons";
 
 export interface PostCardProps {
   post: Post;
@@ -25,24 +39,28 @@ export default function PostCard({
   const profile = post.profile as Profile;
   const user = useUserInfo();
   const [avatarUrl, setAvatarUrl] = useState("");
-  const [likes, setLikes] = useState<Likes>([]);
+  const [interactions, setInteractions] = useState<PostInteractions>([]);
+  const [comment, setComment] = useState("");
   const navigation = useNavigation();
 
-  useConsoleLog(likes);
+  useConsoleLog(interactions);
 
   const userLikesPost = useMemo(
-    () => likes?.find((like) => like.user_id === user?.profile?.id),
-    [likes, user]
+    () =>
+      interactions?.find(
+        (interaction) => interaction.user_id === user?.profile?.id
+      ),
+    [interactions, user]
   );
 
-  const getLikes = useCallback(
-    () => fetchLikes(post.id).then(setLikes),
+  const getPostInteractions = useCallback(
+    () => fetchPostInteractions(post.id).then(setInteractions),
     [post]
   );
 
   useEffect(() => {
-    getLikes();
-  }, [getLikes]);
+    getPostInteractions();
+  }, [getPostInteractions]);
 
   useEffect(() => {
     if (profile?.avatar_url) {
@@ -69,7 +87,7 @@ export default function PostCard({
       if (error) Alert.alert(error.message);
     }
 
-    getLikes();
+    getPostInteractions();
   };
 
   function confirmDelete() {
@@ -81,6 +99,23 @@ export default function PostCard({
       { text: "OK", onPress: () => onDelete?.() },
     ]);
   }
+
+  const onPressSendComment = async () => {
+    if (user?.profile?.id) {
+      supabase
+        .from("post_interactions")
+        .insert({
+          post_id: post.id,
+          user_id: user?.profile?.id,
+          content: comment,
+          interaction_type: "comment",
+        })
+        .then(() => {
+          getPostInteractions();
+          setComment("");
+        });
+    }
+  };
 
   return (
     <Card style={[styles.container, containerStyles]}>
@@ -118,8 +153,10 @@ export default function PostCard({
                 color={"#0f4358"}
                 style={{ marginHorizontal: 10 }}
               />
-              {likes.length >= 0 && (
-                <Text style={{ marginHorizontal: 10 }}>{likes.length}</Text>
+              {interactions.length >= 0 && (
+                <Text style={{ marginHorizontal: 10 }}>
+                  {interactions.length}
+                </Text>
               )}
             </TouchableOpacity>
 
@@ -149,6 +186,43 @@ export default function PostCard({
           )}
         </Card>
       )}
+      <View style={{ flexDirection: "column", marginHorizontal: 20 }}>
+        {interactions.map((like) => {
+          return <Text>{like.content}</Text>;
+        })}
+      </View>
+      <View
+        style={{
+          ...styles.flex,
+          justifyContent: "space-between",
+          marginHorizontal: 15,
+          marginVertical: 5,
+          backgroundColor: "#e4e7eb",
+          padding: 5,
+          borderRadius: 6,
+        }}
+      >
+        <TextInput
+          placeholder="Add comment..."
+          placeholderTextColor={"#696969"}
+          style={{
+            marginLeft: 5,
+            paddingRight: 10,
+            fontFamily: "DMSans",
+            width: 300,
+          }}
+          value={comment}
+          onChangeText={setComment}
+        />
+        <TouchableOpacity onPress={onPressSendComment}>
+          <Ionicons
+            name="send"
+            size={24}
+            color={Colors.TurquoiseDark}
+            style={{ marginRight: 10 }}
+          />
+        </TouchableOpacity>
+      </View>
     </Card>
   );
 }
