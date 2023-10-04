@@ -1,8 +1,10 @@
 import { Database } from "../db_types";
 import { supabase } from "./supabase";
 
-export type Likes = Awaited<ReturnType<typeof fetchLikes>>;
-export type Like = Likes[number];
+export type PostInteractions = Awaited<
+  ReturnType<typeof fetchPostInteractions>
+>;
+export type PostInteraction = PostInteractions[number];
 export type Posts = Awaited<ReturnType<typeof fetchPosts>>;
 export type Post = Posts[number];
 export type Reels = Awaited<ReturnType<typeof fetchReels>>;
@@ -79,10 +81,10 @@ export const fetchEvents = async () => {
   return data;
 };
 
-export const fetchLikes = async (postId: string) => {
+export const fetchPostInteractions = async (postId: string) => {
   const { data, error } = await supabase
-    .from("post_likes")
-    .select("user_id, id")
+    .from("post_interactions")
+    .select("*, profile: profiles(username, avatar_url, id)")
     .eq("post_id", postId);
   if (error) {
     console.log("error", error);

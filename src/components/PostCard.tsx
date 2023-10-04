@@ -1,4 +1,11 @@
-import { Alert, Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Image,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useNavigation } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Video } from "expo-av";
@@ -8,8 +15,22 @@ import { useUserInfo } from "../lib/userContext";
 import Avatar from "./Avatar";
 import { supabase } from "../lib/supabase";
 import Colors from "../../enums";
-import { Likes, Post, Profile, downloadAvatar, fetchLikes } from "../lib/api";
-import useConsoleLog from "../../utils/useConsoleLog";
+import {
+  PostInteractions,
+  Post,
+  Profile,
+  downloadAvatar,
+  fetchPostInteractions,
+} from "../lib/api";
+import { Ionicons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
+import { SingleComment } from "./SingleComment";
+
+export enum InteractionType {
+  Like = "like",
+  Comment = "comment",
+  Share = "share",
+}
 
 export interface PostCardProps {
   post: Post;
@@ -25,24 +46,51 @@ export default function PostCard({
   const profile = post.profile as Profile;
   const user = useUserInfo();
   const [avatarUrl, setAvatarUrl] = useState("");
-  const [likes, setLikes] = useState<Likes>([]);
+  const [interactions, setInteractions] = useState<PostInteractions>([]);
+  const [comment, setComment] = useState("");
   const navigation = useNavigation();
 
-  useConsoleLog(likes);
-
-  const userLikesPost = useMemo(
-    () => likes?.find((like) => like.user_id === user?.profile?.id),
-    [likes, user]
+  const postLikes = useMemo(
+    () =>
+      interactions?.filter(
+        (interaction) => interaction.interaction_type === InteractionType.Like
+      ),
+    [interactions]
   );
 
-  const getLikes = useCallback(
-    () => fetchLikes(post.id).then(setLikes),
+  const postComments = useMemo(
+    () =>
+      interactions?.filter(
+        (interaction) =>
+          interaction.interaction_type === InteractionType.Comment
+      ),
+    [interactions]
+  );
+
+  const postShares = useMemo(
+    () =>
+      interactions?.filter(
+        (interaction) => interaction.interaction_type === InteractionType.Share
+      ),
+    [interactions]
+  );
+
+  const userLikesPost = useMemo(
+    () =>
+      postLikes?.find(
+        (interaction) => interaction.user_id === user?.profile?.id
+      ),
+    [interactions, user]
+  );
+
+  const getPostInteractions = useCallback(
+    () => fetchPostInteractions(post.id).then(setInteractions),
     [post]
   );
 
   useEffect(() => {
-    getLikes();
-  }, [getLikes]);
+    getPostInteractions();
+  }, [getPostInteractions]);
 
   useEffect(() => {
     if (profile?.avatar_url) {
@@ -55,20 +103,30 @@ export default function PostCard({
 
     if (userLikesPost) {
       const { error } = await supabase
-        .from("post_likes")
+        .from("post_interactions")
         .delete()
         .eq("id", userLikesPost.id);
       if (error) Alert.alert(error.message);
     } else {
-      const { error } = await supabase.from("post_likes").insert({
+      const { error } = await supabase.from("post_interactions").insert({
         post_id: post.id,
         user_id: user?.profile?.id,
+        interaction_type: InteractionType.Like,
       });
 
       if (error) Alert.alert(error.message);
     }
 
-    getLikes();
+    getPostInteractions();
+  };
+
+  const deleteComment = async (id: string) => {
+    const { error } = await supabase
+      .from("post_interactions")
+      .delete()
+      .eq("id", id);
+    if (error) Alert.alert(error.message);
+    getPostInteractions();
   };
 
   function confirmDelete() {
@@ -80,6 +138,23 @@ export default function PostCard({
       { text: "OK", onPress: () => onDelete?.() },
     ]);
   }
+
+  const onPressSendComment = async () => {
+    if (user?.profile?.id) {
+      supabase
+        .from("post_interactions")
+        .insert({
+          post_id: post.id,
+          user_id: user?.profile?.id,
+          content: comment,
+          interaction_type: InteractionType.Comment,
+        })
+        .then(() => {
+          getPostInteractions();
+          setComment("");
+        });
+    }
+  };
 
   return (
     <Card style={[styles.container, containerStyles]}>
@@ -107,18 +182,14 @@ export default function PostCard({
         </View>
         <View>
           <Card style={styles.footer}>
-            <TouchableOpacity
-              onPress={toggleLike}
-              style={{ flexDirection: "row", alignItems: "flex-end" }}
-            >
+            <TouchableOpacity onPress={toggleLike} style={styles.cornerIcon}>
               <FontAwesome
                 name={userLikesPost ? "heart" : "heart-o"}
-                size={24}
+                size={18}
                 color={"#0f4358"}
-                style={{ marginHorizontal: 10 }}
               />
-              {likes.length >= 0 && (
-                <Text style={{ marginHorizontal: 10 }}>{likes.length}</Text>
+              {postLikes.length >= 0 && (
+                <Text style={{ marginHorizontal: 10 }}>{postLikes.length}</Text>
               )}
             </TouchableOpacity>
 
@@ -148,6 +219,28 @@ export default function PostCard({
           )}
         </Card>
       )}
+      <View style={{ flexDirection: "column", marginHorizontal: 20 }}>
+        {postComments?.map((comment) => (
+          <SingleComment comment={comment} deleteComment={deleteComment} />
+        ))}
+      </View>
+      <View style={styles.commentFormContainer}>
+        <TextInput
+          placeholder="Add comment..."
+          placeholderTextColor={"#696969"}
+          style={styles.addCommentInput}
+          value={comment}
+          onChangeText={setComment}
+        />
+        <TouchableOpacity onPress={onPressSendComment}>
+          <Ionicons
+            name="send"
+            size={24}
+            color={Colors.TurquoiseDark}
+            style={{ marginRight: 10 }}
+          />
+        </TouchableOpacity>
+      </View>
     </Card>
   );
 }
@@ -217,5 +310,31 @@ const styles = StyleSheet.create({
   innerView: {
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+  commentFormContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginHorizontal: 15,
+    marginVertical: 5,
+    backgroundColor: "#e4e7eb",
+    padding: 5,
+    borderRadius: 6,
+    marginTop: 15,
+  },
+  addCommentInput: {
+    marginLeft: 5,
+    paddingRight: 10,
+    fontFamily: "DMSans",
+    width: 300,
+  },
+  cornerIcon: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f2f5f5",
+    borderRadius: 5,
+    paddingVertical: 5,
+    paddingLeft: 15,
+    marginRight: 10,
   },
 });

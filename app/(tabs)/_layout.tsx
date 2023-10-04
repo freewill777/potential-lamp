@@ -33,9 +33,9 @@ export type TItemType = ItemType;
 
 export default function TabLayout() {
   const [mediaFile, setMediaFile] = useState("");
-  const [mediaFileType, setMediaFileType] = useState<TMediaFileType | null>(
-    null
-  );
+  // const [mediaFileType, setMediaFileType] = useState<TMediaFileType | null>(
+  //   null
+  // );
   const [newItemType, setNewItemType] = useState<TItemType | null>(null);
   const [showMoreAddOptions, setShowMoreAddOptions] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
@@ -58,7 +58,7 @@ export default function TabLayout() {
   const reset = () => {
     setMediaFile("");
     setNewItemType(null);
-    setMediaFileType(null);
+    // setMediaFileType(null);
   };
 
   const onPressActionButton = async (type: string) => {
@@ -177,7 +177,7 @@ export default function TabLayout() {
         setShowMoreAddOptions={setShowMoreAddOptions}
         onPress={onPressActionButton}
         setNewItemType={setNewItemType}
-        newItemType={newItemType}
+        // newItemType={newItemType}
       />
     </>
   );
