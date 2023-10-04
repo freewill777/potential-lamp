@@ -121,7 +121,7 @@ export interface Database {
           {
             foreignKeyName: "post_interactions_user_id_fkey"
             columns: ["user_id"]
-            referencedRelation: "users"
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           }
         ]

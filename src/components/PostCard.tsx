@@ -22,9 +22,9 @@ import {
   downloadAvatar,
   fetchPostInteractions,
 } from "../lib/api";
-import useConsoleLog from "../../utils/useConsoleLog";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
+import { SingleComment } from "./SingleComment";
 
 export enum InteractionType {
   Like = "like",
@@ -50,11 +50,34 @@ export default function PostCard({
   const [comment, setComment] = useState("");
   const navigation = useNavigation();
 
-  useConsoleLog(interactions);
+  const postLikes = useMemo(
+    () =>
+      interactions?.filter(
+        (interaction) => interaction.interaction_type === InteractionType.Like
+      ),
+    [interactions]
+  );
+
+  const postComments = useMemo(
+    () =>
+      interactions?.filter(
+        (interaction) =>
+          interaction.interaction_type === InteractionType.Comment
+      ),
+    [interactions]
+  );
+
+  const postShares = useMemo(
+    () =>
+      interactions?.filter(
+        (interaction) => interaction.interaction_type === InteractionType.Share
+      ),
+    [interactions]
+  );
 
   const userLikesPost = useMemo(
     () =>
-      interactions?.find(
+      postLikes?.find(
         (interaction) => interaction.user_id === user?.profile?.id
       ),
     [interactions, user]
@@ -159,20 +182,14 @@ export default function PostCard({
         </View>
         <View>
           <Card style={styles.footer}>
-            <TouchableOpacity
-              onPress={toggleLike}
-              style={{ flexDirection: "row", alignItems: "flex-end" }}
-            >
+            <TouchableOpacity onPress={toggleLike} style={styles.cornerIcon}>
               <FontAwesome
                 name={userLikesPost ? "heart" : "heart-o"}
-                size={24}
+                size={18}
                 color={"#0f4358"}
-                style={{ marginHorizontal: 10 }}
               />
-              {interactions.length >= 0 && (
-                <Text style={{ marginHorizontal: 10 }}>
-                  {interactions.length}
-                </Text>
+              {postLikes.length >= 0 && (
+                <Text style={{ marginHorizontal: 10 }}>{postLikes.length}</Text>
               )}
             </TouchableOpacity>
 
@@ -203,7 +220,7 @@ export default function PostCard({
         </Card>
       )}
       <View style={{ flexDirection: "column", marginHorizontal: 20 }}>
-        {interactions?.map((comment) => (
+        {postComments?.map((comment) => (
           <SingleComment comment={comment} deleteComment={deleteComment} />
         ))}
       </View>
@@ -228,22 +245,6 @@ export default function PostCard({
   );
 }
 
-const SingleComment = ({
-  comment,
-  deleteComment,
-}: {
-  comment: any;
-  deleteComment: (id: string) => void;
-}) => {
-  return (
-    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-      <Text>{comment.content}</Text>
-      <TouchableOpacity onPress={() => deleteComment(String(comment.id))}>
-        <MaterialIcons name="delete" size={24} color={Colors.TurquoiseDark} />
-      </TouchableOpacity>
-    </View>
-  );
-};
 const styles = StyleSheet.create({
   flex: { flexDirection: "row", alignItems: "center" },
   container: {
@@ -319,11 +320,21 @@ const styles = StyleSheet.create({
     backgroundColor: "#e4e7eb",
     padding: 5,
     borderRadius: 6,
+    marginTop: 15,
   },
   addCommentInput: {
     marginLeft: 5,
     paddingRight: 10,
     fontFamily: "DMSans",
     width: 300,
+  },
+  cornerIcon: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#f2f5f5",
+    borderRadius: 5,
+    paddingVertical: 5,
+    paddingLeft: 15,
+    marginRight: 10,
   },
 });

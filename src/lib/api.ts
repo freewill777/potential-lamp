@@ -84,7 +84,7 @@ export const fetchEvents = async () => {
 export const fetchPostInteractions = async (postId: string) => {
   const { data, error } = await supabase
     .from("post_interactions")
-    .select("user_id, id, interaction_type, content")
+    .select("*, profile: profiles(username, avatar_url, id)")
     .eq("post_id", postId);
   if (error) {
     console.log("error", error);
