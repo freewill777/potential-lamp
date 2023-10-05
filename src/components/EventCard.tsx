@@ -70,7 +70,7 @@ const EventCard = ({
     () =>
       interactions?.filter(
         (interaction) =>
-          interaction.interaction_type === InteractionType.Comment
+          interaction?.interaction_type === InteractionType.Comment
       ),
     [interactions]
   );
@@ -78,14 +78,14 @@ const EventCard = ({
   const likes = useMemo(
     () =>
       interactions?.filter(
-        (interaction) => interaction.interaction_type === InteractionType.Like
+        (interaction) => interaction?.interaction_type === InteractionType.Like
       ),
     [interactions]
   );
 
   const userLikesThis = useMemo(
     () =>
-      likes?.find((interaction) => interaction.user_id === user?.profile?.id),
+      likes?.find((interaction) => interaction?.user_id === user?.profile?.id),
     [interactions, user]
   );
 

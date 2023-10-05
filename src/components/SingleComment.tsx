@@ -1,9 +1,8 @@
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { PostInteractions, Profile, downloadAvatar } from "../lib/api";
 import { Text } from "./Themed";
 import { MaterialIcons } from "@expo/vector-icons";
 import Colors from "../../enums";
-import useConsoleLog from "../../utils/useConsoleLog";
 import { useEffect, useState } from "react";
 import Avatar from "./Avatar";
 import { useUserInfo } from "../lib/userContext";
@@ -27,16 +26,10 @@ const SingleComment = ({
   }, [authorProfile]);
 
   return (
-    <View
-      style={{
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginBottom: 5,
-      }}
-    >
-      <View style={{ flexDirection: "row", gap: 5, alignItems: "center" }}>
+    <View style={styles.container}>
+      <View style={styles.userInfo}>
         <Avatar uri={avatarUrl} size={20} />
-        <Text style={{ fontWeight: "bold" }}>{authorProfile?.username}</Text>
+        <Text style={styles.userInfoUsername}>{authorProfile?.username}</Text>
         <Text>{comment.content}</Text>
       </View>
       {user?.profile?.id === authorProfile?.id ? (
@@ -49,3 +42,13 @@ const SingleComment = ({
 };
 
 export { SingleComment };
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 5,
+  },
+  userInfo: { flexDirection: "row", gap: 5, alignItems: "center" },
+  userInfoUsername: { fontWeight: "bold" },
+});
