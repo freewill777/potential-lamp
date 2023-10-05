@@ -1,4 +1,11 @@
-import { FlatList, View, Image, StyleSheet, SafeAreaView } from "react-native";
+import {
+  FlatList,
+  View,
+  Image,
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+} from "react-native";
 import { Text, EventCard } from "../../src/components";
 import Colors from "../../enums";
 import { useEffect, useState } from "react";
@@ -27,18 +34,20 @@ const EventsScreen = () => {
     setEvents(events.filter((event) => event.id !== id));
   }
 
-  const renderItem = ({ item }: { item: TEvent }) => (
-    <EventCard event={item} deleteEvent={deleteEvent} />
+  const renderItem = ({ item, index }: { item: TEvent; index: number }) => (
+    <EventCard event={item} deleteEvent={deleteEvent} key={index} />
   );
 
   return (
-    <SafeAreaView>
-      <FlatList
-        data={events}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-      />
-    </SafeAreaView>
+    <ScrollView>
+      <SafeAreaView>
+        <FlatList
+          data={events}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+        />
+      </SafeAreaView>
+    </ScrollView>
   );
 };
 

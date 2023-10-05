@@ -30,7 +30,7 @@ const VisitingProfile = () => {
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <PostCard post={item} />}
+        renderItem={({ item, index }) => <PostCard post={item} key={index} />}
       />
     </View>
   );

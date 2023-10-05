@@ -38,6 +38,7 @@ export default function TabOneScreen() {
             onDelete={() => handleDeletePost(item.id)}
             post={item}
             containerStyles={index ? null : { borderBottomWidth: 1 }}
+            key={index}
           />
         )}
       />

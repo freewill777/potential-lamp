@@ -6,7 +6,7 @@ import {
   View,
   Alert,
 } from "react-native";
-import { Avatar, Card, Text } from "../../src/components";
+import { Avatar, Card, Text, SingleComment } from "../../src/components";
 import Colors from "../../enums";
 import { useEffect, useState, useMemo } from "react";
 import {
@@ -16,7 +16,6 @@ import {
   Profile,
 } from "../../src/lib/api";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
-import { SingleComment } from "../../src/components/SingleComment";
 import { useUserInfo } from "../lib/userContext";
 import { supabase } from "../lib/supabase";
 import { useNavigation } from "expo-router";
@@ -202,8 +201,12 @@ const EventCard = ({
       <Text>{event.location}</Text>
       <Image source={{ uri: event.media }} style={styles.image} />
       <View style={styles.commentsContainer}>
-        {comments?.map((comment) => (
-          <SingleComment comment={comment} deleteComment={deleteComment} />
+        {comments?.map((comment, index) => (
+          <SingleComment
+            comment={comment}
+            deleteComment={deleteComment}
+            key={index}
+          />
         ))}
       </View>
       <View style={styles.commentFormContainer}>

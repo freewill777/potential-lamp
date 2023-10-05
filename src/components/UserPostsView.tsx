@@ -21,7 +21,9 @@ const UserPostsView = ({ userId }: { userId: string }) => {
       <FriendSystem userId={userId} />
       <FlatList
         data={posts}
-        renderItem={({ item }) => <PostCard post={item} onDelete={() => {}} />}
+        renderItem={({ item, index }) => (
+          <PostCard post={item} onDelete={() => {}} key={index} />
+        )}
         keyExtractor={(item) => item.id}
       />
     </View>

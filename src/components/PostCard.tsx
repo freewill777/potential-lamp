@@ -9,7 +9,7 @@ import {
 import { useNavigation } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Video } from "expo-av";
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { Card, Text } from "./Themed";
 import { useUserInfo } from "../lib/userContext";
 import Avatar from "./Avatar";
@@ -22,8 +22,6 @@ import {
   downloadAvatar,
   fetchPostInteractions,
 } from "../lib/api";
-import { Ionicons } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
 import { SingleComment } from "./SingleComment";
 
 export enum InteractionType {
@@ -220,8 +218,12 @@ export default function PostCard({
         </Card>
       )}
       <View style={{ flexDirection: "column", marginHorizontal: 20 }}>
-        {postComments?.map((comment) => (
-          <SingleComment comment={comment} deleteComment={deleteComment} />
+        {postComments?.map((comment, index) => (
+          <SingleComment
+            comment={comment}
+            deleteComment={deleteComment}
+            key={index}
+          />
         ))}
       </View>
       <View style={styles.commentFormContainer}>
