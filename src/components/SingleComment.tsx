@@ -17,23 +17,29 @@ const SingleComment = ({
 }) => {
   const user = useUserInfo();
 
-  const authorProfile = comment.profile as Profile;
+  const authorProfile = comment?.profile as Profile;
 
   const [avatarUrl, setAvatarUrl] = useState("");
 
   useEffect(() => {
-    if (authorProfile.avatar_url)
-      downloadAvatar(authorProfile.avatar_url).then(setAvatarUrl);
+    if (authorProfile?.avatar_url)
+      downloadAvatar(authorProfile?.avatar_url).then(setAvatarUrl);
   }, [authorProfile]);
 
   return (
-    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+    <View
+      style={{
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginBottom: 5,
+      }}
+    >
       <View style={{ flexDirection: "row", gap: 5, alignItems: "center" }}>
         <Avatar uri={avatarUrl} size={20} />
-        <Text style={{ fontWeight: "bold" }}>{authorProfile.username}</Text>
+        <Text style={{ fontWeight: "bold" }}>{authorProfile?.username}</Text>
         <Text>{comment.content}</Text>
       </View>
-      {user?.profile?.id === authorProfile.id ? (
+      {user?.profile?.id === authorProfile?.id ? (
         <TouchableOpacity onPress={() => deleteComment(String(comment.id))}>
           <MaterialIcons name="delete" size={24} color={Colors.TurquoiseDark} />
         </TouchableOpacity>

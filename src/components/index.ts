@@ -19,3 +19,5 @@ import { DrawerPanel } from "./DrawerPanel";
 export { DrawerPanel };
 import { MainHeader } from "./MainHader";
 export { MainHeader };
+import { EventCard } from "./EventCard";
+export { EventCard };

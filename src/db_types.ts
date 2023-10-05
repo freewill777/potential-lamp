@@ -9,6 +9,46 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      event_interactions: {
+        Row: {
+          content: string | null
+          created_at: string
+          event_id: string
+          id: number
+          interaction_type: string
+          user_id: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          event_id: string
+          id?: number
+          interaction_type: string
+          user_id: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          event_id?: string
+          id?: number
+          interaction_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_interactions_event_id_fkey"
+            columns: ["event_id"]
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_interactions_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       events: {
         Row: {
           created_at: string
@@ -43,46 +83,6 @@ export interface Database {
         Relationships: [
           {
             foreignKeyName: "events_user_id_fkey"
-            columns: ["user_id"]
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      events_interactions: {
-        Row: {
-          content: string | null
-          created_at: string
-          event_id: string
-          id: number
-          interaction_type: string
-          user_id: string
-        }
-        Insert: {
-          content?: string | null
-          created_at?: string
-          event_id: string
-          id?: number
-          interaction_type: string
-          user_id: string
-        }
-        Update: {
-          content?: string | null
-          created_at?: string
-          event_id?: string
-          id?: number
-          interaction_type?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "events_interactions_event_id_fkey"
-            columns: ["event_id"]
-            referencedRelation: "events"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "events_interactions_user_id_fkey"
             columns: ["user_id"]
             referencedRelation: "profiles"
             referencedColumns: ["id"]

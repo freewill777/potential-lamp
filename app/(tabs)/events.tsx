@@ -1,8 +1,9 @@
 import { FlatList, View, Image, StyleSheet, SafeAreaView } from "react-native";
-import { Text } from "../../src/components";
+import { Text, EventCard } from "../../src/components";
 import Colors from "../../enums";
 import { useEffect, useState } from "react";
 import { Events, fetchEvents } from "../../src/lib/api";
+import { supabase } from "../../src/lib/supabase";
 
 type TEvent = {
   id: string;
@@ -21,15 +22,15 @@ const EventsScreen = () => {
     fetchEvents().then(setEvents);
   }, []);
 
+  async function deleteEvent(id: string) {
+    await supabase.from("events").delete().match({ id });
+    setEvents(events.filter((event) => event.id !== id));
+  }
+
   const renderItem = ({ item }: { item: TEvent }) => (
-    <View style={styles.renderItem}>
-      <Text>{item.name}</Text>
-      <Text>{item.description}</Text>
-      <Text>{item.date}</Text>
-      <Text>{item.location}</Text>
-      <Image source={{ uri: item.media }} style={styles.image} />
-    </View>
+    <EventCard event={item} deleteEvent={deleteEvent} />
   );
+
   return (
     <SafeAreaView>
       <FlatList

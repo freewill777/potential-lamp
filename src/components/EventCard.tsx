@@ -1,64 +1,72 @@
 import {
-  Alert,
   Image,
   StyleSheet,
-  TextInput,
   TouchableOpacity,
+  TextInput,
   View,
+  Alert,
 } from "react-native";
-import { useNavigation } from "expo-router";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Video } from "expo-av";
-import { FontAwesome } from "@expo/vector-icons";
-import { Card, Text } from "./Themed";
-import { useUserInfo } from "../lib/userContext";
-import Avatar from "./Avatar";
-import { supabase } from "../lib/supabase";
+import { Avatar, Card, Text } from "../../src/components";
 import Colors from "../../enums";
+import { useEffect, useState, useMemo } from "react";
 import {
-  PostInteractions,
-  Post,
-  Profile,
+  fetchEventInteractions,
+  EventInteractions,
   downloadAvatar,
-  fetchPostInteractions,
-} from "../lib/api";
-import { Ionicons } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
-import { SingleComment } from "./SingleComment";
+  Profile,
+} from "../../src/lib/api";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { SingleComment } from "../../src/components/SingleComment";
+import { useUserInfo } from "../lib/userContext";
+import { supabase } from "../lib/supabase";
+import { useNavigation } from "expo-router";
 
-export enum InteractionType {
-  Like = "like",
-  Comment = "comment",
-  Share = "share",
-}
+type TEvent = {
+  id: string;
+  name: string;
+  description: string;
+  date: string;
+  location: string;
+  image: string;
+  media: string;
+};
 
-export interface PostCardProps {
-  post: Post;
-  onDelete?: () => void;
-  containerStyles?: any;
-}
+const InteractionType = {
+  Like: "like",
+  Comment: "comment",
+  Share: "share",
+  Attend: "attend",
+  Interested: "interested",
+};
 
-export default function EventCard({
-  post,
-  onDelete,
-  containerStyles,
-}: PostCardProps) {
-  const profile = post.profile as Profile;
-  const user = useUserInfo();
-  const [avatarUrl, setAvatarUrl] = useState("");
-  const [interactions, setInteractions] = useState<PostInteractions>([]);
-  const [comment, setComment] = useState("");
+type TInteractionType = keyof typeof InteractionType;
+
+const EventCard = ({
+  event,
+  deleteEvent,
+}: {
+  event: TEvent;
+  deleteEvent: (id: string) => void;
+}) => {
   const navigation = useNavigation();
+  const profile = event.profile as Profile;
+  const user = useUserInfo();
+  const [interactions, setInteractions] = useState<EventInteractions>([]);
+  const [comment, setComment] = useState("");
 
-  const postLikes = useMemo(
-    () =>
-      interactions?.filter(
-        (interaction) => interaction.interaction_type === InteractionType.Like
-      ),
-    [interactions]
-  );
+  const [avatarUrl, setAvatarUrl] = useState("");
 
-  const postComments = useMemo(
+  useEffect(() => {
+    fetchEventInteractions(event?.id).then(setInteractions);
+  }, [event]);
+
+  useEffect(() => {
+    if (profile?.avatar_url) {
+      downloadAvatar(profile.avatar_url).then(setAvatarUrl);
+    }
+  }, [profile]);
+
+  const comments = useMemo(
     () =>
       interactions?.filter(
         (interaction) =>
@@ -67,49 +75,62 @@ export default function EventCard({
     [interactions]
   );
 
-  const postShares = useMemo(
+  const likes = useMemo(
     () =>
       interactions?.filter(
-        (interaction) => interaction.interaction_type === InteractionType.Share
+        (interaction) => interaction.interaction_type === InteractionType.Like
       ),
     [interactions]
   );
 
-  const userLikesPost = useMemo(
+  const userLikesThis = useMemo(
     () =>
-      postLikes?.find(
-        (interaction) => interaction.user_id === user?.profile?.id
-      ),
+      likes?.find((interaction) => interaction.user_id === user?.profile?.id),
     [interactions, user]
   );
 
-  const getPostInteractions = useCallback(
-    () => fetchPostInteractions(post.id).then(setInteractions),
-    [post]
-  );
-
-  useEffect(() => {
-    getPostInteractions();
-  }, [getPostInteractions]);
-
-  useEffect(() => {
-    if (profile?.avatar_url) {
-      downloadAvatar(profile.avatar_url).then(setAvatarUrl);
+  const onPressSendComment = async () => {
+    if (user?.profile?.id) {
+      supabase
+        .from("event_interactions")
+        .insert({
+          event_id: event.id,
+          user_id: user?.profile?.id,
+          content: comment,
+          interaction_type: InteractionType.Comment,
+        })
+        .then(() => {
+          fetchEventInteractions(event?.id).then(setInteractions);
+          setComment("");
+        });
     }
-  }, [profile]);
+  };
+
+  const deleteComment = async (interactionId: string) => {
+    await supabase.from("event_interactions").delete().eq("id", interactionId);
+    fetchInteractions();
+  };
+
+  const fetchInteractions = async () => {
+    const { data } = await supabase
+      .from("event_interactions")
+      .select("*, profile: profiles(username, avatar_url, id)")
+      .eq("event_id", event.id);
+    setInteractions(data ?? []);
+  };
 
   const toggleLike = async () => {
     if (!user.profile) return;
 
-    if (userLikesPost) {
+    if (userLikesThis) {
       const { error } = await supabase
-        .from("post_interactions")
+        .from("event_interactions")
         .delete()
-        .eq("id", userLikesPost.id);
+        .eq("id", userLikesThis.id);
       if (error) Alert.alert(error.message);
     } else {
-      const { error } = await supabase.from("post_interactions").insert({
-        post_id: post.id,
+      const { error } = await supabase.from("event_interactions").insert({
+        event_id: event.id,
         user_id: user?.profile?.id,
         interaction_type: InteractionType.Like,
       });
@@ -117,110 +138,71 @@ export default function EventCard({
       if (error) Alert.alert(error.message);
     }
 
-    getPostInteractions();
+    fetchEventInteractions(event?.id).then(setInteractions);
   };
 
-  const deleteComment = async (id: string) => {
-    const { error } = await supabase
-      .from("post_interactions")
-      .delete()
-      .eq("id", id);
-    if (error) Alert.alert(error.message);
-    getPostInteractions();
-  };
-
-  function confirmDelete() {
+  async function confirmDelete(
+    eventId: string,
+    deleteEvent: (id: string) => void
+  ) {
     Alert.alert("Delete post", "Are you sure you want to delete the post?", [
       {
         text: "Cancel",
         style: "cancel",
       },
-      { text: "OK", onPress: () => onDelete?.() },
+      { text: "OK", onPress: async () => deleteEvent?.(eventId) },
     ]);
   }
 
-  const onPressSendComment = async () => {
-    if (user?.profile?.id) {
-      supabase
-        .from("post_interactions")
-        .insert({
-          post_id: post.id,
-          user_id: user?.profile?.id,
-          content: comment,
-          interaction_type: InteractionType.Comment,
-        })
-        .then(() => {
-          getPostInteractions();
-          setComment("");
-        });
-    }
-  };
-
   return (
-    <Card style={[styles.container, containerStyles]}>
-      <View style={styles.innerView}>
-        <View>
-          <Card style={styles.header}>
-            <TouchableOpacity
-              style={styles.flex}
-              onPress={() => {
-                // @ts-ignore
-                navigation.navigate("visitingProfile", {
-                  userId: post.user_id,
-                });
-              }}
-            >
-              <Avatar uri={avatarUrl} />
-              <Text style={styles.username}>{profile?.username}</Text>
-            </TouchableOpacity>
-          </Card>
-          {post?.content && (
-            <Card style={styles.content}>
-              <Text style={styles.contentText}>{post?.content}</Text>
-            </Card>
-          )}
-        </View>
-        <View>
-          <Card style={styles.footer}>
-            <TouchableOpacity onPress={toggleLike} style={styles.cornerIcon}>
-              <FontAwesome
-                name={userLikesPost ? "heart" : "heart-o"}
-                size={18}
-                color={"#0f4358"}
-              />
-              {postLikes.length >= 0 && (
-                <Text style={{ marginHorizontal: 10 }}>{postLikes.length}</Text>
-              )}
-            </TouchableOpacity>
-
-            {user?.profile?.id === post.user_id && (
-              <TouchableOpacity onPress={confirmDelete}>
-                <FontAwesome
-                  name="trash-o"
-                  size={24}
-                  color={"#0f4358"}
-                  style={{ marginHorizontal: 10 }}
-                />
-              </TouchableOpacity>
-            )}
-          </Card>
-        </View>
-      </View>
-      {post.image && (
-        <Card style={styles.imageContainer}>
-          {post.image?.includes(".mov") ? (
-            <Video
-              source={{ uri: post.image }}
-              style={styles.image}
-              useNativeControls
+    <View style={styles.renderItem}>
+      <Card style={styles.footer}>
+        <TouchableOpacity
+          style={styles.flex}
+          onPress={() => {
+            // @ts-ignore
+            navigation.navigate("visitingProfile", {
+              userId: event.user_id,
+            });
+          }}
+        >
+          <Avatar uri={avatarUrl} />
+          <Text style={styles.username}>{profile?.username}</Text>
+        </TouchableOpacity>
+        {user?.profile?.id === event.user_id ? (
+          <TouchableOpacity
+            onPress={() => deleteEvent(event.id)}
+            style={styles.cornerIcon}
+          >
+            <FontAwesome
+              name="trash-o"
+              size={18}
+              color={"#0f4358"}
+              style={{ marginHorizontal: 10 }}
             />
-          ) : (
-            <Image source={{ uri: post.image }} style={styles.image} />
+          </TouchableOpacity>
+        ) : null}
+        <TouchableOpacity
+          onPress={toggleLike}
+          style={{ ...styles.cornerIcon, paddingLeft: 15 }}
+        >
+          <FontAwesome
+            name={userLikesThis ? "heart" : "heart-o"}
+            size={18}
+            color={"#0f4358"}
+          />
+          {likes.length >= 0 && (
+            <Text style={{ marginHorizontal: 10 }}>{likes.length}</Text>
           )}
-        </Card>
-      )}
-      <View style={{ flexDirection: "column", marginHorizontal: 20 }}>
-        {postComments?.map((comment) => (
+        </TouchableOpacity>
+      </Card>
+      <Text>{event.name}</Text>
+      <Text>{event.description}</Text>
+      <Text>{event.date}</Text>
+      <Text>{event.location}</Text>
+      <Image source={{ uri: event.media }} style={styles.image} />
+      <View style={styles.commentsContainer}>
+        {comments?.map((comment) => (
           <SingleComment comment={comment} deleteComment={deleteComment} />
         ))}
       </View>
@@ -241,81 +223,36 @@ export default function EventCard({
           />
         </TouchableOpacity>
       </View>
-    </Card>
+    </View>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  flex: { flexDirection: "row", alignItems: "center" },
-  container: {
-    marginVertical: 8,
-    borderColor: "#99a1a8",
-    borderTopWidth: 0.3,
-    borderBottomWidth: 1,
-    marginHorizontal: 10,
-    backgroundColor: Colors.GrayBeige,
-    borderBottomRightRadius: 10,
-    borderBottomLeftRadius: 10,
-    borderWidth: 0.3,
+export { EventCard };
+
+export const styles = StyleSheet.create({
+  commentsContainer: { flexDirection: "column", marginTop: 20 },
+  renderItem: {
+    padding: 20,
+    backgroundColor: "#fff",
     borderRadius: 10,
-    padding: 5,
-  },
-  avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    marginRight: 8,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingTop: 8,
-    paddingHorizontal: 16,
-    backgroundColor: Colors.GrayBeige,
-  },
-  username: {
-    fontWeight: "bold",
-    marginLeft: 8,
-  },
-  content: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    backgroundColor: Colors.GrayBeige,
-    marginLeft: 5,
-  },
-  contentText: {
-    fontSize: 16,
-    backgroundColor: Colors.GrayBeige,
-  },
-  footer: {
-    paddingTop: 8,
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center",
-    gap: 8,
-    backgroundColor: Colors.GrayBeige,
-  },
-  imageContainer: {
-    height: 400,
-    marginTop: 8,
-    borderRadius: 10,
-    marginHorizontal: 20,
-    marginBottom: 24,
+    marginTop: 16,
+    marginHorizontal: 16,
+    shadowColor: Colors.MagentaDark,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 5,
   },
   image: {
     width: "100%",
-    height: "100%",
-    borderRadius: 10,
-  },
-  innerView: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    height: 250,
+    borderRadius: 5,
+    marginTop: 15,
   },
   commentFormContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginHorizontal: 15,
     marginVertical: 5,
     backgroundColor: "#e4e7eb",
     padding: 5,
@@ -326,7 +263,15 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     paddingRight: 10,
     fontFamily: "DMSans",
-    width: 300,
+    width: 200,
+  },
+  deleteButton: {
+    position: "absolute",
+    top: 20,
+    right: 20,
+    backgroundColor: Colors.White,
+    borderRadius: 5,
+    padding: 10,
   },
   cornerIcon: {
     flexDirection: "row",
@@ -334,7 +279,21 @@ const styles = StyleSheet.create({
     backgroundColor: "#f2f5f5",
     borderRadius: 5,
     paddingVertical: 5,
-    paddingLeft: 15,
     marginRight: 10,
   },
+  footer: {
+    paddingTop: 8,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 8,
+    backgroundColor: Colors.GrayBeige,
+    width: "100%",
+    marginBottom: 15,
+  },
+  username: {
+    fontWeight: "bold",
+    marginLeft: 8,
+  },
+  flex: { flexDirection: "row", alignItems: "center" },
 });
