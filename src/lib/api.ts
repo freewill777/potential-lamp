@@ -5,6 +5,10 @@ export type PostInteractions = Awaited<
   ReturnType<typeof fetchPostInteractions>
 >;
 export type PostInteraction = PostInteractions[number];
+export type EventInteractions = Awaited<
+  ReturnType<typeof fetchPostInteractions>
+>;
+export type EventInteraction = EventInteractions[number];
 export type Posts = Awaited<ReturnType<typeof fetchPosts>>;
 export type Post = Posts[number];
 export type Reels = Awaited<ReturnType<typeof fetchReels>>;
@@ -53,6 +57,19 @@ export const fetchPosts = async () => {
   return data;
 };
 
+export const fetchPostInteractions = async (postId: string) => {
+  const { data, error } = await supabase
+    .from("post_interactions")
+    .select("*, profile: profiles(username, avatar_url, id)")
+    .eq("post_id", postId);
+  if (error) {
+    console.log("error", error);
+    return [];
+  } else {
+    return data;
+  }
+};
+
 export const fetchReels = async () => {
   const { data, error } = await supabase
     .from("reels")
@@ -70,7 +87,7 @@ export const fetchReels = async () => {
 export const fetchEvents = async () => {
   const { data, error } = await supabase
     .from("events")
-    .select("*, profile: profiles(username, avatar_url)")
+    .select("*, profile: profiles(username, avatar_url, id)")
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -81,11 +98,11 @@ export const fetchEvents = async () => {
   return data;
 };
 
-export const fetchPostInteractions = async (postId: string) => {
+export const fetchEventInteractions = async (eventId: string) => {
   const { data, error } = await supabase
-    .from("post_interactions")
+    .from("event_interactions")
     .select("*, profile: profiles(username, avatar_url, id)")
-    .eq("post_id", postId);
+    .eq("event_id", eventId);
   if (error) {
     console.log("error", error);
     return [];
