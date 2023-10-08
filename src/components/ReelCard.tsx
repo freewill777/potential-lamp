@@ -46,7 +46,7 @@ const Interaction = {
   Interested: "interested",
 };
 
-const { height } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 
 const ReelCard = ({
   mainEntity,
@@ -260,6 +260,7 @@ export const styles = StyleSheet.create({
   image: {
     height: height / 2,
     borderRadius: 5,
+    width: "100%",
   },
   commentFormContainer: {
     flexDirection: "row",
@@ -300,6 +301,7 @@ export const styles = StyleSheet.create({
     gap: 8,
     backgroundColor: Colors.GrayBeige,
     width: "100%",
+    marginBottom: 15,
   },
   username: {
     fontWeight: "bold",
