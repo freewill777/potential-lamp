@@ -5,6 +5,7 @@ import {
   TextInput,
   View,
   Alert,
+  Dimensions,
 } from "react-native";
 import { Avatar, Card, Text, SingleComment } from "../../src/components";
 import Colors from "../../enums";
@@ -44,6 +45,8 @@ const Interaction = {
   Attend: "attend",
   Interested: "interested",
 };
+
+const { height } = Dimensions.get("window");
 
 const ReelCard = ({
   mainEntity,
@@ -255,7 +258,7 @@ export const styles = StyleSheet.create({
     elevation: 5,
   },
   image: {
-    height: 250,
+    height: height / 2,
     borderRadius: 5,
   },
   commentFormContainer: {
@@ -266,7 +269,6 @@ export const styles = StyleSheet.create({
     backgroundColor: "#e4e7eb",
     padding: 5,
     borderRadius: 6,
-    marginTop: 15,
   },
   addCommentInput: {
     marginLeft: 5,
@@ -298,7 +300,6 @@ export const styles = StyleSheet.create({
     gap: 8,
     backgroundColor: Colors.GrayBeige,
     width: "100%",
-    marginBottom: 15,
   },
   username: {
     fontWeight: "bold",
