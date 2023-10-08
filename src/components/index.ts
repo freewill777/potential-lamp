@@ -18,3 +18,4 @@ export { DrawerPanel } from "./DrawerPanel";
 export { MainHeader } from "./MainHader";
 export { EventCard } from "./EventCard";
 export { SingleComment } from "./SingleComment";
+export { ReelCard } from "./ReelCard";

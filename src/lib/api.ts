@@ -8,7 +8,11 @@ export type PostInteraction = PostInteractions[number];
 export type EventInteractions = Awaited<
   ReturnType<typeof fetchPostInteractions>
 >;
+export type ReelInteractions = Awaited<
+  ReturnType<typeof fetchReelInteractions>
+>;
 export type EventInteraction = EventInteractions[number];
+export type ReelInteraction = ReelInteractions[number];
 export type Posts = Awaited<ReturnType<typeof fetchPosts>>;
 export type Post = Posts[number];
 export type Reels = Awaited<ReturnType<typeof fetchReels>>;
@@ -82,6 +86,19 @@ export const fetchReels = async () => {
   }
   // console.log(data)
   return data;
+};
+
+export const fetchReelInteractions = async (reelId: string) => {
+  const { data, error } = await supabase
+    .from("reel_interactions")
+    .select("*, profile: profiles(username, avatar_url, id)")
+    .eq("reel_id", reelId);
+  if (error) {
+    console.log("error", error);
+    return [];
+  } else {
+    return data;
+  }
 };
 
 export const fetchEvents = async () => {
