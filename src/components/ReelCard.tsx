@@ -5,13 +5,14 @@ import {
   TextInput,
   View,
   Alert,
+  Dimensions,
 } from "react-native";
 import { Avatar, Card, Text, SingleComment } from "../../src/components";
 import Colors from "../../enums";
 import { useEffect, useState, useMemo } from "react";
 import {
-  fetchEventInteractions,
-  EventInteractions,
+  fetchReelInteractions,
+  ReelInteractions,
   downloadAvatar,
   Profile,
 } from "../../src/lib/api";
@@ -19,20 +20,25 @@ import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { useUserInfo } from "../lib/userContext";
 import { supabase } from "../lib/supabase";
 import { useNavigation } from "expo-router";
+import { Video } from "expo-av";
 
-type TEvent = {
+//
+// Reel
+//
+
+type TMainEntity = {
   id: string;
   name: string;
   description: string;
   date: string;
   location: string;
   image: string;
-  media: string;
+  video: string;
   user_id: string;
   profile?: Profile;
 };
 
-const EventInteraction = {
+const Interaction = {
   Like: "like",
   Comment: "comment",
   Share: "share",
@@ -40,24 +46,26 @@ const EventInteraction = {
   Interested: "interested",
 };
 
-const EventCard = ({
-  event,
-  deleteEvent,
+const { width, height } = Dimensions.get("window");
+
+const ReelCard = ({
+  mainEntity,
+  deleteMainEntity,
 }: {
-  event: TEvent;
-  deleteEvent: (id: string) => void;
+  mainEntity: TMainEntity;
+  deleteMainEntity: (id: string) => void;
 }) => {
   const navigation = useNavigation();
-  const profile = event.profile as Profile;
+  const profile = mainEntity.profile as Profile;
   const user = useUserInfo();
-  const [interactions, setInteractions] = useState<EventInteractions>([]);
+  const [interactions, setInteractions] = useState<ReelInteractions>([]);
   const [comment, setComment] = useState("");
 
   const [avatarUrl, setAvatarUrl] = useState("");
 
   useEffect(() => {
-    fetchEventInteractions(event?.id).then(setInteractions);
-  }, [event]);
+    fetchReelInteractions(mainEntity?.id).then(setInteractions);
+  }, [mainEntity]);
 
   useEffect(() => {
     if (profile?.avatar_url) {
@@ -68,8 +76,7 @@ const EventCard = ({
   const comments = useMemo(
     () =>
       interactions?.filter(
-        (interaction) =>
-          interaction?.interaction_type === EventInteraction.Comment
+        (interaction) => interaction?.interaction_type === Interaction.Comment
       ),
     [interactions]
   );
@@ -77,7 +84,7 @@ const EventCard = ({
   const likes = useMemo(
     () =>
       interactions?.filter(
-        (interaction) => interaction?.interaction_type === EventInteraction.Like
+        (interaction) => interaction?.interaction_type === Interaction.Like
       ),
     [interactions]
   );
@@ -91,30 +98,30 @@ const EventCard = ({
   const onPressSendComment = async () => {
     if (user?.profile?.id) {
       supabase
-        .from("event_interactions")
+        .from("reel_interactions")
         .insert({
-          event_id: event.id,
+          reel_id: mainEntity.id,
           user_id: user?.profile?.id,
           content: comment,
-          interaction_type: EventInteraction.Comment,
+          interaction_type: Interaction.Comment,
         })
         .then(() => {
-          fetchEventInteractions(event?.id).then(setInteractions);
+          fetchReelInteractions(mainEntity?.id).then(setInteractions);
           setComment("");
         });
     }
   };
 
   const deleteComment = async (interactionId: string) => {
-    await supabase.from("event_interactions").delete().eq("id", interactionId);
+    await supabase.from("reel_interactions").delete().eq("id", interactionId);
     fetchInteractions();
   };
 
   const fetchInteractions = async () => {
     const { data } = await supabase
-      .from("event_interactions")
+      .from("reel_interactions")
       .select("*, profile: profiles(username, avatar_url, id)")
-      .eq("event_id", event.id);
+      .eq("reel_id", mainEntity.id);
     setInteractions(data ?? []);
   };
 
@@ -123,33 +130,33 @@ const EventCard = ({
 
     if (userLikesThis) {
       const { error } = await supabase
-        .from("event_interactions")
+        .from("reel_interactions")
         .delete()
         .eq("id", userLikesThis.id);
       if (error) Alert.alert(error.message);
     } else {
-      const { error } = await supabase.from("event_interactions").insert({
-        event_id: event.id,
+      const { error } = await supabase.from("reel_interactions").insert({
+        reel_id: mainEntity.id,
         user_id: user?.profile?.id,
-        interaction_type: EventInteraction.Like,
+        interaction_type: Interaction.Like,
       });
 
       if (error) Alert.alert(error.message);
     }
 
-    fetchEventInteractions(event?.id).then(setInteractions);
+    fetchReelInteractions(mainEntity?.id).then(setInteractions);
   };
 
   async function confirmDelete(
     eventId: string,
-    deleteEvent: (id: string) => void
+    deleteMainEntity: (id: string) => void
   ) {
     Alert.alert("Delete post", "Are you sure you want to delete the post?", [
       {
         text: "Cancel",
         style: "cancel",
       },
-      { text: "OK", onPress: async () => deleteEvent?.(eventId) },
+      { text: "OK", onPress: async () => deleteMainEntity?.(eventId) },
     ]);
   }
 
@@ -161,16 +168,16 @@ const EventCard = ({
           onPress={() => {
             // @ts-ignore
             navigation.navigate("visitingProfile", {
-              userId: event.user_id,
+              userId: mainEntity.user_id,
             });
           }}
         >
           <Avatar uri={avatarUrl} />
           <Text style={styles.username}>{profile?.username}</Text>
         </TouchableOpacity>
-        {user?.profile?.id === event.user_id ? (
+        {user?.profile?.id === mainEntity.user_id ? (
           <TouchableOpacity
-            onPress={() => deleteEvent(event.id)}
+            onPress={() => deleteMainEntity(mainEntity.id)}
             style={styles.cornerIcon}
           >
             <FontAwesome
@@ -195,11 +202,15 @@ const EventCard = ({
           )}
         </TouchableOpacity>
       </Card>
-      <Text>{event.name}</Text>
-      <Text>{event.description}</Text>
-      <Text>{event.date}</Text>
-      <Text>{event.location}</Text>
-      <Image source={{ uri: event.media }} style={styles.image} />
+      <Text>{mainEntity.name}</Text>
+      <Text>{mainEntity.description}</Text>
+      <Text>{mainEntity.date}</Text>
+      <Text>{mainEntity.location}</Text>
+      <Video
+        source={{ uri: mainEntity.video }}
+        style={styles.image}
+        useNativeControls
+      />
       <View style={styles.commentsContainer}>
         {comments?.map((comment, index) => (
           <SingleComment
@@ -230,7 +241,7 @@ const EventCard = ({
   );
 };
 
-export { EventCard };
+export { ReelCard };
 
 export const styles = StyleSheet.create({
   commentsContainer: { flexDirection: "column", marginTop: 20 },
@@ -247,10 +258,9 @@ export const styles = StyleSheet.create({
     elevation: 5,
   },
   image: {
-    width: "100%",
-    height: 250,
+    height: height / 2,
     borderRadius: 5,
-    marginTop: 15,
+    width: "100%",
   },
   commentFormContainer: {
     flexDirection: "row",
@@ -260,7 +270,6 @@ export const styles = StyleSheet.create({
     backgroundColor: "#e4e7eb",
     padding: 5,
     borderRadius: 6,
-    marginTop: 15,
   },
   addCommentInput: {
     marginLeft: 5,
