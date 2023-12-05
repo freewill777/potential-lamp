@@ -68,7 +68,7 @@ const FloatingActionButton = ({
               )}
               text="Create new post"
               onPress={async () => {
-                setNewItemType();
+                setNewItemType(ItemType.POST);
                 await onPress(ItemType.POST);
               }}
               onPhotoTaken={() => setShowMoreAddOptions(false)}

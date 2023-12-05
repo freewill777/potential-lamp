@@ -246,7 +246,7 @@ export default function PostCard({
           )}
         </>
       ) : (
-        <View>
+        <View style={{ marginHorizontal: 20 }}>
           <Text>No comments</Text>
         </View>
       )}
