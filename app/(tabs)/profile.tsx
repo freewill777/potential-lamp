@@ -10,7 +10,7 @@ export default function TabTwoScreen() {
 
   return (
     <>
-      <View style={{ height: Dimensions.get("window").height / 5 }}>
+      <View style={{ height: Dimensions.get("window").height / 5.5 }}>
         <ProfileForm
           profile={profile}
           loading={loading!}

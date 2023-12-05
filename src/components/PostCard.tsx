@@ -223,7 +223,10 @@ export default function PostCard({
           {!showComments && (
             <View style={{ marginHorizontal: 20 }}>
               <TouchableOpacity onPress={() => setShowComments(true)}>
-                <Text>Show {postComments.length} comments</Text>
+                <Text>
+                  Show {postComments.length} comment
+                  {postComments.length > 1 ? "s" : ""}
+                </Text>
               </TouchableOpacity>
             </View>
           )}
