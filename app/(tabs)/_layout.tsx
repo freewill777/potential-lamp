@@ -104,6 +104,7 @@ export default function TabLayout() {
             ),
             header: () => <MainHeader toggleDrawer={toggleDrawer} />,
             headerTitle: "",
+            unmountOnBlur: true,
           }}
         />
         <Tabs.Screen
@@ -139,6 +140,7 @@ export default function TabLayout() {
             tabBarIcon: ({ color }: any) => (
               <TabBarIcon name="wechat" color={color} />
             ),
+            unmountOnBlur: true,
           }}
         />
         <Tabs.Screen
@@ -150,6 +152,7 @@ export default function TabLayout() {
             tabBarIcon: ({ color }: any) => (
               <TabBarIcon name="user" color={color} />
             ),
+            unmountOnBlur: true,
           }}
         />
         <Tabs.Screen
@@ -159,6 +162,7 @@ export default function TabLayout() {
             header: () => <MainHeader toggleDrawer={toggleDrawer} />,
             headerTitle: "",
             href: null,
+            unmountOnBlur: true,
           }}
         />
         <Tabs.Screen

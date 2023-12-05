@@ -104,6 +104,8 @@ export default function ProfileForm({
                 flexDirection: "row",
                 backgroundColor: "#f2f2f2",
                 alignItems: "center",
+                flex: 1,
+                justifyContent: "space-between",
               }}
             >
               <View
@@ -128,8 +130,8 @@ export default function ProfileForm({
                 style={{
                   ...styles.input,
                   backgroundColor: "#f2f2f2",
-                  marginHorizontal: 5,
                   flexDirection: "row",
+                  justifyContent: "flex-end",
                 }}
               >
                 {editNameMode ? (
@@ -142,13 +144,13 @@ export default function ProfileForm({
                   </>
                 ) : (
                   <SimpleButton
-                    title="Edit"
+                    title="Edit name"
                     onPress={() => setEditNameMode(true)}
                   />
                 )}
-              </View>
-              <View style={{ ...styles.input, backgroundColor: "#f2f2f2" }}>
-                <SimpleButton title="Logout" onPress={onLogout} />
+                <View style={{ backgroundColor: "#f2f2f2", marginLeft: 5 }}>
+                  <SimpleButton title="Logout" onPress={onLogout} />
+                </View>
               </View>
             </View>
           </View>
