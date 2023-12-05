@@ -11,7 +11,6 @@ import Colors from "../../enums";
 import { useEffect, useState } from "react";
 import { Events, Profile, fetchReels } from "../../src/lib/api";
 import { supabase } from "../../src/lib/supabase";
-
 type TReel = {
   id: string;
   name: string;
@@ -23,15 +22,18 @@ type TReel = {
   user_id: string;
   profile?: Profile;
 };
-
 const ReelsScreen = () => {
   const [reels, setReels] = useState<Events>([]);
-
-  useEffect(() => {
-    fetchReels().then(setReels);
-  }, []);
-
-  async function deleteEvent(id: string) {
+useEffect(() => {
+    const subscription = supabase
+      .from('reels')
+      .on('*', payload => {
+        fetchReels().then(setReels);
+      })
+      .subscribe();
+return () => supabase.removeSubscription(subscription);
+}, []);
+async function deleteEvent(id: string) {
     await supabase.from("reels").delete().match({ id });
     setReels(reels.filter((event) => event.id !== id));
   }
