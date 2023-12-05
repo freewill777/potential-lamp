@@ -33,6 +33,7 @@ export default function ProfileForm({
   const [username, setUsername] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [avatarUpdated, setAvatarUpdated] = useState(false);
+  const [editNameMode, setEditNameMode] = useState(false);
 
   useEffect(() => {
     if (profile?.username) {
@@ -46,6 +47,7 @@ export default function ProfileForm({
   const handleSubmit = () => {
     if (profile) {
       onSave({ ...profile, username, avatar_url: avatarUrl }, avatarUpdated);
+      setEditNameMode(false);
     }
   };
 
@@ -85,7 +87,7 @@ export default function ProfileForm({
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.inner}>
-            <View style={styles.input}>
+            <View style={{ backgroundColor: "#f2f2f2" }}>
               <TouchableOpacity
                 style={styles.avatarButton}
                 onPress={handleChangeAvatar}
@@ -97,17 +99,55 @@ export default function ProfileForm({
               </TouchableOpacity>
             </View>
 
-            <View>
-              <TextInput
-                style={styles.textInput}
-                placeholder="Username"
-                value={username}
-                onChangeText={setUsername}
-              />
-              <View style={styles.input}>
-                <SimpleButton title="Save" onPress={handleSubmit} />
+            <View
+              style={{
+                flexDirection: "row",
+                backgroundColor: "#f2f2f2",
+                alignItems: "center",
+              }}
+            >
+              <View
+                style={{
+                  ...styles.input,
+                  backgroundColor: "#f2f2f2",
+                  marginHorizontal: 5,
+                }}
+              >
+                {editNameMode ? (
+                  <TextInput
+                    style={styles.textInput}
+                    placeholder="Username"
+                    value={username}
+                    onChangeText={setUsername}
+                  />
+                ) : (
+                  <Text>{username}</Text>
+                )}
               </View>
-              <View style={styles.input}>
+              <View
+                style={{
+                  ...styles.input,
+                  backgroundColor: "#f2f2f2",
+                  marginHorizontal: 5,
+                  flexDirection: "row",
+                }}
+              >
+                {editNameMode ? (
+                  <>
+                    <SimpleButton title="Save" onPress={handleSubmit} />
+                    <SimpleButton
+                      title="Cancel"
+                      onPress={() => setEditNameMode(false)}
+                    />
+                  </>
+                ) : (
+                  <SimpleButton
+                    title="Edit"
+                    onPress={() => setEditNameMode(true)}
+                  />
+                )}
+              </View>
+              <View style={{ ...styles.input, backgroundColor: "#f2f2f2" }}>
                 <SimpleButton title="Logout" onPress={onLogout} />
               </View>
             </View>
@@ -126,7 +166,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    // backgroundColor: "red",
+    backgroundColor: "#f2f2f2",
   },
   input: {
     paddingVertical: 8,

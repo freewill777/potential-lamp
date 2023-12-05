@@ -1,24 +1,38 @@
 import React, { useEffect, useState } from "react";
-import { View, FlatList } from "react-native";
+import { View, FlatList, ScrollView } from "react-native";
 import { fetchPosts, Post } from "../lib/api";
 import PostCard from "./PostCard";
 import { FriendSystem } from "./FriendSystem";
+import { Text } from "./Themed";
 
 const UserPostsView = ({ userId }: { userId: string }) => {
   const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
     const getPosts = async () => {
-      const userPosts = await fetchPosts();
-      setPosts(userPosts.filter((post) => post.user_id === userId));
+      fetchPosts().then((posts) => {
+        const filtered = posts.filter((post) => post.user_id === userId);
+        setPosts(filtered);
+      });
     };
 
     getPosts();
   }, [userId]);
 
+  useEffect(() => {
+    posts.map((post) => console.log(post.user_id));
+  }, [posts]);
+
+  if (posts.length === 0) {
+    return (
+      <View style={{ flex: 3, justifyContent: "center", alignItems: "center" }}>
+        <Text>No posts</Text>
+      </View>
+    );
+  }
   return (
-    <View>
-      <FriendSystem userId={userId} />
+    <ScrollView>
+      {/* <FriendSystem userId={userId} /> */}
       <FlatList
         data={posts}
         renderItem={({ item, index }) => (
@@ -26,7 +40,7 @@ const UserPostsView = ({ userId }: { userId: string }) => {
         )}
         keyExtractor={(item) => item.id}
       />
-    </View>
+    </ScrollView>
   );
 };
 

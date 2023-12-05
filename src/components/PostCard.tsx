@@ -46,6 +46,7 @@ export default function PostCard({
   const [avatarUrl, setAvatarUrl] = useState("");
   const [interactions, setInteractions] = useState<PostInteractions>([]);
   const [comment, setComment] = useState("");
+  const [showComments, setShowComments] = useState(false);
   const navigation = useNavigation();
 
   const postLikes = useMemo(
@@ -217,15 +218,38 @@ export default function PostCard({
           )}
         </Card>
       )}
-      <View style={{ flexDirection: "column", marginHorizontal: 20 }}>
-        {postComments?.map((comment, index) => (
-          <SingleComment
-            comment={comment}
-            deleteComment={deleteComment}
-            key={index}
-          />
-        ))}
-      </View>
+      {postComments.length ? (
+        <>
+          {!showComments && (
+            <View style={{ marginHorizontal: 20 }}>
+              <TouchableOpacity onPress={() => setShowComments(true)}>
+                <Text>Show {postComments.length} comments</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          {showComments && (
+            <View style={{ flexDirection: "column", marginHorizontal: 20 }}>
+              {postComments?.map((comment, index) => (
+                <SingleComment
+                  comment={comment}
+                  deleteComment={deleteComment}
+                  key={index}
+                />
+              ))}
+              <TouchableOpacity
+                style={{ marginTop: 20 }}
+                onPress={() => setShowComments(false)}
+              >
+                <Text>Hide comments</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </>
+      ) : (
+        <View>
+          <Text>No comments</Text>
+        </View>
+      )}
       <View style={styles.commentFormContainer}>
         <TextInput
           placeholder="Add comment..."
