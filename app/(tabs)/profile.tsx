@@ -7,14 +7,14 @@ export default function TabTwoScreen() {
   const { profile, loading, saveProfile } = useUserInfo();
 
   return (
-    <>
-      <ProfileForm
+<div style={{ padding: '20px', maxWidth: '600px', margin: 'auto' }}>
+<ProfileForm
         profile={profile}
         loading={loading!}
         onSave={saveProfile!}
         onLogout={() => supabase.auth.signOut()}
       />
       {profile?.id && <UserPostsView userId={profile?.id} />}
-    </>
-  );
+</div>
+);
 }
