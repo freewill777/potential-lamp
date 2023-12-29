@@ -8,11 +8,19 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
-
+import { useState } from 'react';
 const HeaderButtonsBar = ({ toggleDrawer }: { toggleDrawer: Function }) => {
   const { navigate } = useNavigation();
-
-  return (
+const [searchTerm, setSearchTerm] = useState('');
+const handleSearch = (text: string) => {
+    setSearchTerm(text);
+    if (text.length > 0) {
+      navigate('SearchResults', { query: text });
+    } else {
+      navigate('Home'); // Assuming 'Home' is the screen to navigate to when search is cleared
+    }
+  };
+return (
     <>
       <View style={styles.inputContainer}>
         <Ionicons
@@ -29,7 +37,9 @@ const HeaderButtonsBar = ({ toggleDrawer }: { toggleDrawer: Function }) => {
             paddingRight: 10,
             fontFamily: "DMSans",
           }}
-        />
+value={searchTerm}
+          onChangeText={handleSearch}
+/>
       </View>
       <Pressable>
         {({ pressed }) => (
