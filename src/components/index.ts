@@ -1,3 +1,5 @@
+import SimplePostCard from "./SimplePostCard";
+
 export { default as AddPostForm } from "./AddPostForm";
 export { default as AuthForm, logoMainImage } from "./AuthForm";
 export { default as Avatar } from "./Avatar";
@@ -19,3 +21,4 @@ export { MainHeader } from "./MainHader";
 export { EventCard } from "./EventCard";
 export { SingleComment } from "./SingleComment";
 export { ReelCard } from "./ReelCard";
+export { default as SimplePostCard } from "./SimplePostCard";

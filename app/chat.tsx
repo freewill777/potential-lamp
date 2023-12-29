@@ -1,10 +1,17 @@
 import { Alert, StyleSheet, Text, View } from "react-native";
 import { useState, useCallback, useEffect } from "react";
 import { GiftedChat, Bubble, BubbleProps } from "react-native-gifted-chat";
-import { Message, Messages, fetchMessages } from "../src/lib/api";
+import {
+  Message,
+  Messages,
+  downloadAvatar,
+  fetchMessages,
+} from "../src/lib/api";
 import { supabase } from "../src/lib/supabase";
 import { useUserInfo } from "../src/lib/userContext";
 import { useRoute } from "@react-navigation/native";
+import { Avatar } from "../src/components";
+import { useSearchParams } from "expo-router";
 
 type ChatScreenRouteProp = {
   key: string;
@@ -71,6 +78,7 @@ export default function ChatScreen() {
       setMessages((prevMessages) => [data[0], ...prevMessages]);
     }
   }, []);
+  const { userId: visitingUserId } = useSearchParams();
 
   return (
     <GiftedChat
@@ -87,9 +95,46 @@ export default function ChatScreen() {
       renderBubble={(props) => (
         <Bubble
           {...props}
-          wrapperStyle={{ right: { backgroundColor: "#0f4358" } }}
+          wrapperStyle={{
+            right: { backgroundColor: "#0f4358", paddingVertical: 5 },
+            left: { backgroundColor: "#0f3650", paddingVertical: 5 },
+          }}
+          textStyle={{
+            left: { color: "#fff" },
+          }}
         />
       )}
+      renderAvatar={(props) => {
+        const [userProfile, setUserProfile] = useState<any | null>(null);
+        const [avatarUrl, setAvatarUrl] = useState("");
+
+        const fetchUserProfile = async () => {
+          const { data, error } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", visitingUserId);
+          if (error) {
+            console.log(error);
+          } else {
+            setUserProfile((prevUserInfo: any) => ({
+              ...prevUserInfo,
+              profile: data[0],
+            }));
+          }
+        };
+
+        useEffect(() => {
+          fetchUserProfile();
+        }, []);
+
+        useEffect(() => {
+          if (userProfile?.avatar_url) {
+            downloadAvatar(userProfile.avatar_url).then(setAvatarUrl);
+          }
+        }, [userProfile]);
+
+        return !!avatarUrl && <Avatar uri={avatarUrl} size={80} />;
+      }}
     />
   );
 }

@@ -95,7 +95,7 @@ export default function ProfileForm({
                 <View style={styles.iconChange}>
                   <FontAwesome name="upload" size={18} color="black" />
                 </View>
-                <Avatar uri={avatarUrl} size={120} />
+                <Avatar uri={avatarUrl} size={80} />
               </TouchableOpacity>
             </View>
 
@@ -112,7 +112,8 @@ export default function ProfileForm({
                 style={{
                   ...styles.input,
                   backgroundColor: "#f2f2f2",
-                  marginHorizontal: 5,
+                  marginLeft: 10,
+                  marginTop: 10,
                 }}
               >
                 {editNameMode ? (
@@ -132,6 +133,7 @@ export default function ProfileForm({
                   backgroundColor: "#f2f2f2",
                   flexDirection: "row",
                   justifyContent: "flex-end",
+                  marginTop: 5,
                 }}
               >
                 {editNameMode ? (
