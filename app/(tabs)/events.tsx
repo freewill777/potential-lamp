@@ -11,7 +11,6 @@ import Colors from "../../enums";
 import { useEffect, useState } from "react";
 import { Events, fetchEvents } from "../../src/lib/api";
 import { supabase } from "../../src/lib/supabase";
-
 type TEvent = {
   id: string;
   name: string;
@@ -21,15 +20,18 @@ type TEvent = {
   image: string;
   media: string;
 };
-
 const EventsScreen = () => {
   const [events, setEvents] = useState<Events>([]);
-
-  useEffect(() => {
-    fetchEvents().then(setEvents);
-  }, []);
-
-  async function deleteEvent(id: string) {
+useEffect(() => {
+    const subscription = supabase
+      .from('events')
+      .on('*', payload => {
+        fetchEvents().then(setEvents);
+      })
+      .subscribe();
+return () => supabase.removeSubscription(subscription);
+}, []);
+async function deleteEvent(id: string) {
     await supabase.from("events").delete().match({ id });
     setEvents(events.filter((event) => event.id !== id));
   }

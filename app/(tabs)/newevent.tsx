@@ -5,7 +5,6 @@ import * as ImagePicker from "expo-image-picker";
 import { handleSubmitEvent } from "../handles";
 import { useNavigation } from "expo-router";
 import { SCREENS } from "../../src/constants/Screens";
-
 const NewEventScreen = () => {
   const [eventName, setEventName] = useState("");
   const [eventDescription, setEventDescription] = useState("");
@@ -13,17 +12,7 @@ const NewEventScreen = () => {
   const [eventDate, setEventDate] = useState("");
   const [eventMediaUrl, setEventMediaUrl] = useState("");
   const navigation = useNavigation();
-
-  const handlePickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-    });
-    if (!result.canceled) {
-      setEventMediaUrl(result.assets[0].uri);
-    }
-  };
-
-  const onPressSubmitEvent = async () => {
+const onPressSubmitEvent = async () => {
     await handleSubmitEvent(
       eventName,
       eventMediaUrl,
@@ -31,11 +20,10 @@ const NewEventScreen = () => {
       eventLocation,
       eventDate
     );
-    //@ts-ignore
+//@ts-ignore
     navigation.navigate(SCREENS.EVENTS);
   };
-
-  return (
+return (
     <View>
       <TouchableOpacity onPress={handlePickImage}>
         <Image
