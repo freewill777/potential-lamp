@@ -7,10 +7,11 @@ import { Posts, fetchPosts } from "../../src/lib/api";
 import { supabase } from "../../src/lib/supabase";
 import PostCard from "../../src/components/PostCard";
 import { useUserInfo } from "../../src/lib/userContext";
-//
+import SearchResults from "../../src/components/SearchResults";
 export default function TabOneScreen() {
   const [posts, setPosts] = useState<Posts>([]);
-  const { profile } = useUserInfo();
+const [searchTerm, setSearchTerm] = useState('');
+const { profile } = useUserInfo();
 
   useEffect(() => {
     fetchPosts().then(setPosts);
@@ -25,8 +26,10 @@ export default function TabOneScreen() {
       setPosts(posts.filter((post) => post.id !== id));
     }
   };
-
-  return (
+if (searchTerm) {
+    return <SearchResults searchTerm={searchTerm} />;
+  }
+return (
     <View style={styles.container}>
       <View lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       <FlatList
