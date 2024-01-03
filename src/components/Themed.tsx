@@ -80,6 +80,7 @@ export function SimpleButton(
   props: DefaultButton["props"] & {
     inverted?: boolean;
     danger?: boolean;
+    solidBackground?: string;
   }
 ) {
   const styles = {
@@ -92,6 +93,7 @@ export function SimpleButton(
       ...(props.inverted && { backgroundColor: "#0f4358" }),
       ...(props.danger && { backgroundColor: "#d85b50" }),
       ...(props.danger && { borderColor: "#e88e8e" }),
+      ...(props.solidBackground && { backgroundColor: props.solidBackground }),
     },
     followButtonText: {
       fontWeight: "bold",

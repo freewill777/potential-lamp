@@ -8,6 +8,9 @@ import { AuthProvider, useUserInfo } from "../src/lib/userContext";
 import { SCREENS } from "../src/constants/Screens";
 import { StatusBar } from "expo-status-bar";
 import * as ImagePicker from "expo-image-picker";
+import { ImageBackground } from "react-native";
+import { splashBg } from "../src/components/AuthForm";
+import { View } from "../src/components";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -41,8 +44,22 @@ function AppStack() {
     })();
   }, []);
 
+  const splashBg1 = require("../src/assets/images/splash1.png");
+
   if (!session) {
-    return <AuthScreen />;
+    return (
+      <View style={{ flex: 1 }}>
+        <ImageBackground
+          source={{
+            uri: "https://images.unsplash.com/photo-1585208798174-6cedd86e019a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2073&q=80",
+          }}
+          resizeMode="cover"
+          style={{ flex: 1 }}
+        >
+          <AuthScreen />
+        </ImageBackground>
+      </View>
+    );
   }
 
   return (

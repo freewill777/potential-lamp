@@ -59,6 +59,7 @@ const VisitingProfile = () => {
             loading={!!userProfile}
             onSave={saveProfile!}
             onLogout={() => supabase.auth.signOut()}
+            visiting
           />
         )}
       </View>

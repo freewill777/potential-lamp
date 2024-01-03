@@ -21,6 +21,7 @@ interface AuthFormProps {
 }
 
 export const logoMainImage = require("../assets/images/logo-main.png");
+export const splashBg = require("../assets/images/splash1.png");
 
 export default function AuthForm({
   onSignUp,
@@ -47,41 +48,70 @@ export default function AuthForm({
     }
   };
 
+  const primary = "#380a2a";
+
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={styles.container}
-      >
-        <View style={styles.inner}>
-          {/* <Text style={styles.title}>Social Media</Text> */}
-          <Image source={logoMainImage} style={{ width: 180, height: 180 }} />
-          {mode === "signUp" && (
-            <View style={styles.input}>
-              <TextInput
-                placeholder="Username"
-                value={username}
-                onChangeText={setUsername}
-              />
-            </View>
-          )}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
+      <View style={styles.inner}>
+        <Image
+          source={logoMainImage}
+          style={{ width: 180, height: 180, marginTop: 300 }}
+        />
+        {mode === "signUp" && (
           <View style={styles.input}>
+            <TextInput
+              placeholder="Username"
+              value={username}
+              onChangeText={setUsername}
+              placeholderTextColor={primary}
+              style={[
+                styles.input,
+                styles.spacing,
+                {
+                  borderColor: username.length
+                    ? username.length > 3
+                      ? primary
+                      : "red"
+                    : primary,
+                },
+              ]}
+            />
+          </View>
+        )}
+        <View
+          style={{
+            backgroundColor: undefined,
+            backfaceVisibility: "hidden",
+            paddingBottom: 200,
+          }}
+        >
+          <View
+            style={[
+              styles.input,
+              { backgroundColor: undefined, backfaceVisibility: "hidden" },
+            ]}
+          >
             <TextInput
               placeholder="Email"
               value={email}
               onChangeText={setEmail}
               autoCapitalize="none"
               keyboardType="email-address"
+              placeholderTextColor={primary}
               style={[
                 styles.input,
+                styles.spacing,
                 {
-                  borderColor: "#380a2a",
-                  borderWidth: 1,
-                  borderRadius: 5,
-                  paddingHorizontal: 10,
+                  borderColor: email.length
+                    ? email.includes("@") && email.includes(".")
+                      ? primary
+                      : "red"
+                    : primary,
                 },
               ]}
-              placeholderTextColor={"#380a2a"}
             />
           </View>
           <View style={styles.input}>
@@ -91,14 +121,16 @@ export default function AuthForm({
               onChangeText={setPassword}
               secureTextEntry={true}
               autoCapitalize="none"
-              placeholderTextColor={"#380a2a"}
+              placeholderTextColor={primary}
               style={[
                 styles.input,
+                styles.spacing,
                 {
-                  borderColor: "#380a2a",
-                  borderWidth: 1,
-                  borderRadius: 5,
-                  paddingHorizontal: 10,
+                  borderColor: password.length
+                    ? password.length > 3
+                      ? primary
+                      : "red"
+                    : primary,
                 },
               ]}
             />
@@ -108,26 +140,32 @@ export default function AuthForm({
               title={mode === "login" ? "Log In" : "Register"}
               onPress={handleSubmit}
               disabled={loading || !email || !password}
+              solidBackground="#f7d7af"
             />
           </View>
           <View style={styles.input}>
             <SimpleButton
-              title={mode === "login" ? "Register" : "Log In"}
+              title={
+                mode === "login"
+                  ? "I don't have an account. Register"
+                  : "I already have an account. Log In"
+              }
               onPress={() => {
                 setMode(mode === "login" ? "signUp" : "login");
                 setSuccessfullSignup(false);
               }}
+              solidBackground="#f7d7af"
             />
           </View>
 
           {successfulSignup && mode === "signUp" && (
             <Text style={styles.successText}>
-              Registration successfull. Redirecting...
+              Registration successfull. Log in with your new account.
             </Text>
           )}
         </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -135,13 +173,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  spacing: { borderWidth: 1, borderRadius: 5, paddingHorizontal: 10 },
   inner: {
-    padding: 16,
-    flex: 1,
-    justifyContent: "center",
+    // padding: 16,
+    // flex: 1,
+    justifyContent: "space-around",
     alignItems: "center",
     height: "100%",
     width: "100%",
+    backgroundColor: undefined,
+    backfaceVisibility: "hidden",
   },
   title: {
     fontSize: 32,
@@ -153,8 +194,10 @@ const styles = StyleSheet.create({
   },
   input: {
     paddingVertical: 8,
-    width: "100%",
+    width: 300,
     color: "#380a2a",
+    backgroundColor: undefined,
+    backfaceVisibility: "hidden",
   },
   footer: {
     paddingTop: 16,
