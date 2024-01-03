@@ -7,7 +7,9 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
-    "gen:types": "npx supabase gen types typescript --project-id znubrljvuaprjaubblwi > ./src/db_types.ts"
+    "gen:types": "npx supabase gen types typescript --project-id znubrljvuaprjaubblwi > ./src/db_types.ts",
+    "set:sdk": "export ANDROID_SDK_ROOT=/Users/cristiansfetcu/Library/Android/sdk",
+    "build:android": "eas build --profile preview --platform android --no-wait --local --clear-cache"
   },
   "jest": {
     "preset": "jest-expo"
