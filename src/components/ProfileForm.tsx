@@ -17,11 +17,13 @@ import * as ImagePicker from "expo-image-picker";
 import { FontAwesome } from "@expo/vector-icons";
 import Colors from "../constants/Colors";
 import { SimpleButton } from "./Themed";
+
 interface ProfileFormProps {
   profile: Profile | null;
   onSave: (updatedProfile: Profile, avatarUpdated: boolean) => void;
   onLogout: () => void;
   loading: boolean;
+  visiting: boolean;
 }
 
 export default function ProfileForm({
@@ -29,6 +31,7 @@ export default function ProfileForm({
   onSave,
   loading,
   onLogout,
+  visiting,
 }: ProfileFormProps) {
   const [username, setUsername] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
@@ -144,15 +147,23 @@ export default function ProfileForm({
                       onPress={() => setEditNameMode(false)}
                     />
                   </>
-                ) : (
+                ) : !visiting ? (
                   <SimpleButton
                     title="Edit name"
                     onPress={() => setEditNameMode(true)}
                   />
+                ) : null}
+
+                {!visiting && (
+                  <View style={{ backgroundColor: "#f2f2f2", marginLeft: 5 }}>
+                    <SimpleButton title="Logout" onPress={onLogout} />
+                  </View>
                 )}
-                <View style={{ backgroundColor: "#f2f2f2", marginLeft: 5 }}>
-                  <SimpleButton title="Logout" onPress={onLogout} />
-                </View>
+                {visiting && (
+                  <View style={{ backgroundColor: "#f2f2f2", marginLeft: 5 }}>
+                    <SimpleButton title="Add friend" onPress={() => {}} />
+                  </View>
+                )}
               </View>
             </View>
           </View>

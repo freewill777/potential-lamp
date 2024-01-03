@@ -1,4 +1,4 @@
-import { Alert, StyleSheet } from "react-native";
+import { Alert, StyleSheet, ImageBackground } from "react-native";
 import { Text, View } from "../src/components/Themed";
 import AuthForm from "../src/components/AuthForm";
 import { useState } from "react";
@@ -41,8 +41,10 @@ export default function AuthScreen() {
   };
 
   return (
-    <AuthForm onLogin={handleLogin} onSignUp={handleSignup} loading={loading} />
-  );
+<ImageBackground source={require('../src/assets/images/splash1.png')} style={styles.container}>
+      <AuthForm onLogin={handleLogin} onSignUp={handleSignup} loading={loading} />
+    </ImageBackground>
+);
 }
 
 const styles = StyleSheet.create({
@@ -50,7 +52,9 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-  },
+width: '100%',
+    height: '100%',
+},
   title: {
     fontSize: 20,
     fontWeight: "bold",
