@@ -8,11 +8,11 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
-
+import { useSearchContext } from '../lib/searchContext';
 const HeaderButtonsBar = ({ toggleDrawer }: { toggleDrawer: Function }) => {
   const { navigate } = useNavigation();
-
-  return (
+const { setSearchTerm } = useSearchContext();
+return (
     <>
       <View style={styles.inputContainer}>
         <Ionicons
@@ -29,7 +29,8 @@ const HeaderButtonsBar = ({ toggleDrawer }: { toggleDrawer: Function }) => {
             paddingRight: 10,
             fontFamily: "DMSans",
           }}
-        />
+onChangeText={setSearchTerm}
+/>
       </View>
       <Pressable>
         {({ pressed }) => (
